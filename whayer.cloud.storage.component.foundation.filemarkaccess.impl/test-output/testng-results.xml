@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="1" total="4" passed="3">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Default suite" duration-ms="2070" started-at="2017-08-28T09:39:37Z" finished-at="2017-08-28T09:39:39Z">
+    <groups>
+      <group name="update">
+        <method signature="FileMarkAccessTest.modify()[pri:0, instance:whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest@572863a9]" name="modify" class="whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest"/>
+      </group> <!-- update -->
+      <group name="query">
+        <method signature="FileMarkAccessTest.queryFileInfoSize()[pri:0, instance:whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest@572863a9]" name="queryFileInfoSize" class="whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest"/>
+      </group> <!-- query -->
+      <group name="delete">
+        <method signature="FileMarkAccessTest.deleteFileInfo()[pri:0, instance:whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest@572863a9]" name="deleteFileInfo" class="whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest"/>
+      </group> <!-- delete -->
+      <group name="add">
+        <method signature="FileMarkAccessTest.sigleSave()[pri:0, instance:whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest@572863a9]" name="sigleSave" class="whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest"/>
+      </group> <!-- add -->
+    </groups>
+    <test name="Default test" duration-ms="2070" started-at="2017-08-28T09:39:37Z" finished-at="2017-08-28T09:39:39Z">
+      <class name="whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest">
+        <test-method status="PASS" signature="beforeTest()[pri:0, instance:whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest@572863a9]" name="beforeTest" is-config="true" duration-ms="339" started-at="2017-08-28T17:39:37Z" finished-at="2017-08-28T17:39:37Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- beforeTest -->
+        <test-method status="PASS" signature="sigleSave()[pri:0, instance:whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest@572863a9]" name="sigleSave" duration-ms="1623" started-at="2017-08-28T17:39:37Z" finished-at="2017-08-28T17:39:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- sigleSave -->
+        <test-method status="PASS" signature="modify()[pri:0, instance:whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest@572863a9]" name="modify" duration-ms="39" depends-on-groups="add" started-at="2017-08-28T17:39:39Z" finished-at="2017-08-28T17:39:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- modify -->
+        <test-method status="PASS" signature="queryFileInfoSize()[pri:0, instance:whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest@572863a9]" name="queryFileInfoSize" duration-ms="18" depends-on-groups="update" started-at="2017-08-28T17:39:39Z" finished-at="2017-08-28T17:39:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- queryFileInfoSize -->
+        <test-method status="FAIL" signature="deleteFileInfo()[pri:0, instance:whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest@572863a9]" name="deleteFileInfo" duration-ms="27" depends-on-groups="query" started-at="2017-08-28T17:39:39Z" finished-at="2017-08-28T17:39:39Z">
+          <exception class="java.lang.AssertionError">
+            <message>
+              <![CDATA[expected [true] but found [false]]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.AssertionError: expected [true] but found [false]
+	at org.testng.Assert.fail(Assert.java:94)
+	at org.testng.Assert.failNotEquals(Assert.java:513)
+	at org.testng.Assert.assertTrue(Assert.java:42)
+	at org.testng.Assert.assertTrue(Assert.java:52)
+	at whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest.deleteFileInfo(FileMarkAccessTest.java:221)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:100)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:646)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:811)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1129)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:129)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:112)
+	at org.testng.TestRunner.privateRun(TestRunner.java:746)
+	at org.testng.TestRunner.run(TestRunner.java:600)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:366)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:361)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:268)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1264)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1189)
+	at org.testng.TestNG.runSuites(TestNG.java:1104)
+	at org.testng.TestNG.run(TestNG.java:1076)
+	at org.testng.remote.AbstractRemoteTestNG.run(AbstractRemoteTestNG.java:132)
+	at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:230)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:76)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.AssertionError -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- deleteFileInfo -->
+      </class> <!-- whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>

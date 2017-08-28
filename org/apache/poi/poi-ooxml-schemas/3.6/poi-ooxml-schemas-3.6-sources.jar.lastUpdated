@@ -1,0 +1,16 @@
+#NOTE: This is an Aether internal implementation file, its format can be changed without prior notice.
+#Wed Aug 02 08:48:12 CST 2017
+http\://maven.whayer.cn\:8081/nexus/content/repositories/thirdparty/.error=
+http\://maven.whayer.cn\:8081/nexus/content/repositories/nexus-aliyun/.lastUpdated=1501634887684
+http\://mvnrepository.com/.error=
+http\://maven.whayer.cn\:8081/nexus/content/repositories/nexus-aliyun/.error=
+http\://maven.whayer.cn\:8081/nexus/content/repositories/thirdparty/.lastUpdated=1501634885733
+http\://maven.whayer.cn\:8081/nexus/content/repositories/releases/.lastUpdated=1501634887709
+http\://maven.whayer.cn\:8081/nexus/content/repositories/releases/.error=
+http\://www.sonatype.org/nexus/.error=
+http\://www.sonatype.org/nexus/.lastUpdated=1501634890870
+http\://mvnrepository.com/.lastUpdated=1501634892553
+http\://maven.whayer.cn\:8081/nexus/content/repositories/central/.lastUpdated=1501634885712
+http\://maven.whayer.cn\:8081/nexus/content/repositories/central/.error=
+http\://jcenter.bintray.com/.error=
+http\://jcenter.bintray.com/.lastUpdated=1501634889833
