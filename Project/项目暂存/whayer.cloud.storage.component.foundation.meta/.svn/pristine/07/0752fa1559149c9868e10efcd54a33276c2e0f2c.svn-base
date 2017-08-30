@@ -1,0 +1,38 @@
+/**  
+ * 设备接口
+ * @Title: ProtocolTypeMetaPojo.java
+ * @Package com.whayer.cloud.storage.component.device.deviceaccess.beans
+ * @author Administrator
+ * @date 2017年8月16日 下午3:49:12
+ * @version v1.0.0
+ */
+package com.whayer.cloud.storage.component.foundation.meta.beans;
+
+/**
+ * 资源协议类型（GB28181，海康SDK，大华SDK等等，以一种方式接入一个设备就产生一种协议类型）
+ * @ClassName: ProtocolTypeMetaPojo
+ * @author Administrator
+ * @date 2017年8月16日 下午3:49:12
+ * @version v1.0.0
+ * 
+ */
+public class ProtocolTypeMetaPojo {
+
+	/**
+	 * 类型ID
+	 */
+	protected String id;
+	/**
+	 * 类型编码
+	 */
+	protected String code;
+	/**
+	 * 类型名称
+	 */
+	protected String name;
+	/**
+	 * 类型名称描述
+	 */
+	protected String desc;
+
+}

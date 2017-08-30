@@ -1,0 +1,53 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd">
+                        
+    <bean id="beanService" class="whayer.cloud.utility.core.BeanService">
+		
+	</bean>
+	
+	<bean id="hibernateSessionFacotry" class="whayer.cloud.framework.data.db.dao.datasource.HibernateDbSessionFactory">
+		
+	</bean>
+	
+	<bean id="hibernateDbAdmin" class="whayer.cloud.framework.data.db.dao.metadata.HibernateDbAdmin" scope="prototype">
+		
+	</bean>
+	<!-- <bean id="objectCacheService" class="com.whayer.cloud.component.objectcache.impl.ObjectCacheService"></bean> -->
+	<bean id="hibernateDAO" class="whayer.cloud.framework.data.db.dao.HibernateDao" scope="prototype">
+		
+	</bean>
+	<bean id="timeUnit" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">    
+	        <property name="staticField" value="java.util.concurrent.TimeUnit.MINUTES" />    
+	</bean>
+	 <bean id="synchronousQueue" class="java.util.concurrent.SynchronousQueue">
+	</bean>
+							<!--  int corePoolSize,
+                              int maximumPoolSize,
+                              long keepAliveTime,
+                              TimeUnit unit,
+                              BlockingQueue<Runnable> workQueue -->
+	<bean id="redisCache" class="com.whayer.cloud.storage.component.foundation.meta.impl.RedisThreadPoolExecutor">
+		 <constructor-arg index="0"  value="1"/>
+      	 <constructor-arg index="1"  value="100"/>
+      	 <constructor-arg index="2"  value="50"/>
+      	 <constructor-arg index="3"  ref="timeUnit"/>
+      	 <constructor-arg index="4"  ref="synchronousQueue" />
+	</bean>
+	
+	<bean id="metaDataManagerImpl" class="com.whayer.cloud.storage.component.foundation.meta.impl.MetaDataManagerImpl">
+		<property name="factory" ref="hibernateSessionFacotry" />
+		<property name="beanService" ref="beanService" />
+		<property name="executorService" ref="redisCache" />
+		<property name="typeList">
+            <list>
+                <value>com.whayer.cloud.storage.business.alarm.data.AlarmMessageLevelMeta</value>
+                <value>com.whayer.cloud.storage.business.alarm.data.AlarmMessageTypeMeta</value>
+                <value>com.whayer.cloud.storage.business.base.data.msg.MessageSourceIficationTypeMeta</value>
+                <value>com.whayer.cloud.storage.business.base.data.msg.MessageSourceTypeMeta</value>
+            </list>
+        </property>
+		<!-- <property name="objectCacheService" ref="objectCacheService" /> -->
+	</bean>
+</beans>

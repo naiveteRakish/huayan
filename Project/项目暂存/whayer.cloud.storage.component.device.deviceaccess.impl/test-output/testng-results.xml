@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="5" passed="5">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Default suite" duration-ms="3061" started-at="2017-08-21T04:58:03Z" finished-at="2017-08-21T04:58:06Z">
+    <groups>
+      <group name="update">
+        <method signature="DeviceAccessImplTest.updateListTest()[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]" name="updateListTest" class="whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest"/>
+      </group> <!-- update -->
+      <group name="query">
+        <method signature="DeviceAccessImplTest.searchAlarmInfoListTest()[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]" name="searchAlarmInfoListTest" class="whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest"/>
+      </group> <!-- query -->
+      <group name="add">
+        <method signature="DeviceAccessImplTest.savleAlarmMessageLevelMetaTest()[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]" name="savleAlarmMessageLevelMetaTest" class="whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest"/>
+      </group> <!-- add -->
+      <group name="singleDelete">
+        <method signature="DeviceAccessImplTest.deleteAlarmInfoListTest()[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]" name="deleteAlarmInfoListTest" class="whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest"/>
+      </group> <!-- singleDelete -->
+      <group name="add1">
+        <method signature="DeviceAccessImplTest.savleAlarmMessageLevelMetaListTest()[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]" name="savleAlarmMessageLevelMetaListTest" class="whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest"/>
+      </group> <!-- add1 -->
+    </groups>
+    <test name="Default test" duration-ms="3061" started-at="2017-08-21T04:58:03Z" finished-at="2017-08-21T04:58:06Z">
+      <class name="whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest">
+        <test-method status="PASS" signature="beforeTest()[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]" name="beforeTest" is-config="true" duration-ms="556" started-at="2017-08-21T12:58:03Z" finished-at="2017-08-21T12:58:04Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- beforeTest -->
+        <test-method status="PASS" signature="springTestContextBeforeTestClass()[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]" name="springTestContextBeforeTestClass" is-config="true" duration-ms="1" started-at="2017-08-21T12:58:04Z" finished-at="2017-08-21T12:58:04Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestClass -->
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="297" started-at="2017-08-21T12:58:04Z" depends-on-methods="org.springframework.test.context.testng.AbstractTestNGSpringContextTests.springTestContextBeforeTestClass" finished-at="2017-08-21T12:58:04Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextPrepareTestInstance -->
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2017-08-21T12:58:04Z" finished-at="2017-08-21T12:58:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest.savleAlarmMessageLevelMetaTest()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestMethod -->
+        <test-method status="PASS" signature="savleAlarmMessageLevelMetaTest()[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]" name="savleAlarmMessageLevelMetaTest" duration-ms="1769" started-at="2017-08-21T12:58:04Z" finished-at="2017-08-21T12:58:06Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- savleAlarmMessageLevelMetaTest -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2017-08-21T12:58:06Z" finished-at="2017-08-21T12:58:06Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest.savleAlarmMessageLevelMetaTest()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestMethod -->
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2017-08-21T12:58:06Z" finished-at="2017-08-21T12:58:06Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest.savleAlarmMessageLevelMetaListTest()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestMethod -->
+        <test-method status="PASS" signature="savleAlarmMessageLevelMetaListTest()[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]" name="savleAlarmMessageLevelMetaListTest" duration-ms="129" depends-on-groups="add" started-at="2017-08-21T12:58:06Z" finished-at="2017-08-21T12:58:06Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- savleAlarmMessageLevelMetaListTest -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2017-08-21T12:58:06Z" finished-at="2017-08-21T12:58:06Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest.savleAlarmMessageLevelMetaListTest()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestMethod -->
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2017-08-21T12:58:06Z" finished-at="2017-08-21T12:58:06Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest.updateListTest()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestMethod -->
+        <test-method status="PASS" signature="updateListTest()[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]" name="updateListTest" duration-ms="68" depends-on-groups="add" started-at="2017-08-21T12:58:06Z" finished-at="2017-08-21T12:58:06Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- updateListTest -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2017-08-21T12:58:06Z" finished-at="2017-08-21T12:58:06Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest.updateListTest()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestMethod -->
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2017-08-21T12:58:06Z" finished-at="2017-08-21T12:58:06Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest.searchAlarmInfoListTest()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestMethod -->
+        <test-method status="PASS" signature="searchAlarmInfoListTest()[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]" name="searchAlarmInfoListTest" duration-ms="184" depends-on-groups="update, add" started-at="2017-08-21T12:58:06Z" finished-at="2017-08-21T12:58:06Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- searchAlarmInfoListTest -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2017-08-21T12:58:06Z" finished-at="2017-08-21T12:58:06Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest.searchAlarmInfoListTest()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestMethod -->
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2017-08-21T12:58:06Z" finished-at="2017-08-21T12:58:06Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest.deleteAlarmInfoListTest()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestMethod -->
+        <test-method status="PASS" signature="deleteAlarmInfoListTest()[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]" name="deleteAlarmInfoListTest" duration-ms="20" depends-on-groups="update, query" started-at="2017-08-21T12:58:06Z" finished-at="2017-08-21T12:58:06Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- deleteAlarmInfoListTest -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2017-08-21T12:58:06Z" finished-at="2017-08-21T12:58:06Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest.deleteAlarmInfoListTest()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestMethod -->
+        <test-method status="PASS" signature="springTestContextAfterTestClass()[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]" name="springTestContextAfterTestClass" is-config="true" duration-ms="1" started-at="2017-08-21T12:58:06Z" finished-at="2017-08-21T12:58:06Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestClass -->
+      </class> <!-- whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>

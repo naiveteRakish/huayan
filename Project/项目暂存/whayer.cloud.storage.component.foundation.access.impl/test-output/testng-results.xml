@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="7" passed="7">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Default suite" duration-ms="2761" started-at="2017-08-22T07:11:39Z" finished-at="2017-08-22T07:11:41Z">
+    <groups>
+      <group name="update">
+        <method signature="AccessImplTest.updateListTest()[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="updateListTest" class="whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest"/>
+      </group> <!-- update -->
+      <group name="query">
+        <method signature="AccessImplTest.searchAlarmInfoListTest()[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="searchAlarmInfoListTest" class="whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest"/>
+      </group> <!-- query -->
+      <group name="add">
+        <method signature="AccessImplTest.savleAlarmMessageLevelMetaTest()[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="savleAlarmMessageLevelMetaTest" class="whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest"/>
+      </group> <!-- add -->
+      <group name="singleDelete">
+        <method signature="AccessImplTest.deleteAlarmInfoListTest()[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="deleteAlarmInfoListTest" class="whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest"/>
+      </group> <!-- singleDelete -->
+      <group name="add1">
+        <method signature="AccessImplTest.savleAlarmMessageLevelMetaListTest()[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="savleAlarmMessageLevelMetaListTest" class="whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest"/>
+      </group> <!-- add1 -->
+    </groups>
+    <test name="Default test" duration-ms="2761" started-at="2017-08-22T07:11:39Z" finished-at="2017-08-22T07:11:41Z">
+      <class name="whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest">
+        <test-method status="PASS" signature="beforeTest()[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="beforeTest" is-config="true" duration-ms="281" started-at="2017-08-22T15:11:39Z" finished-at="2017-08-22T15:11:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- beforeTest -->
+        <test-method status="PASS" signature="springTestContextBeforeTestClass()[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="springTestContextBeforeTestClass" is-config="true" duration-ms="1" started-at="2017-08-22T15:11:39Z" finished-at="2017-08-22T15:11:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestClass -->
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="137" started-at="2017-08-22T15:11:39Z" depends-on-methods="org.springframework.test.context.testng.AbstractTestNGSpringContextTests.springTestContextBeforeTestClass" finished-at="2017-08-22T15:11:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextPrepareTestInstance -->
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="2" started-at="2017-08-22T15:11:39Z" finished-at="2017-08-22T15:11:39Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest.savleAlarmMessageLevelMetaTest()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestMethod -->
+        <test-method status="PASS" signature="savleAlarmMessageLevelMetaTest()[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="savleAlarmMessageLevelMetaTest" duration-ms="1598" started-at="2017-08-22T15:11:39Z" finished-at="2017-08-22T15:11:41Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- savleAlarmMessageLevelMetaTest -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2017-08-22T15:11:41Z" finished-at="2017-08-22T15:11:41Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest.savleAlarmMessageLevelMetaTest()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestMethod -->
+        <test-method status="PASS" signature="savleAlarmMessageLevelMetaTest()[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="savleAlarmMessageLevelMetaTest" duration-ms="24" started-at="2017-08-22T15:11:41Z" finished-at="2017-08-22T15:11:41Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- savleAlarmMessageLevelMetaTest -->
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2017-08-22T15:11:41Z" finished-at="2017-08-22T15:11:41Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest.savleAlarmMessageLevelMetaTest()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestMethod -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2017-08-22T15:11:41Z" finished-at="2017-08-22T15:11:41Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest.savleAlarmMessageLevelMetaTest()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestMethod -->
+        <test-method status="PASS" signature="savleAlarmMessageLevelMetaListTest()[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="savleAlarmMessageLevelMetaListTest" duration-ms="235" depends-on-groups="add" started-at="2017-08-22T15:11:41Z" finished-at="2017-08-22T15:11:41Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- savleAlarmMessageLevelMetaListTest -->
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2017-08-22T15:11:41Z" finished-at="2017-08-22T15:11:41Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest.savleAlarmMessageLevelMetaListTest()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestMethod -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2017-08-22T15:11:41Z" finished-at="2017-08-22T15:11:41Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest.savleAlarmMessageLevelMetaListTest()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestMethod -->
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2017-08-22T15:11:41Z" finished-at="2017-08-22T15:11:41Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest.updateListTest()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestMethod -->
+        <test-method status="PASS" signature="updateListTest()[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="updateListTest" duration-ms="29" depends-on-groups="add" started-at="2017-08-22T15:11:41Z" finished-at="2017-08-22T15:11:41Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- updateListTest -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2017-08-22T15:11:41Z" finished-at="2017-08-22T15:11:41Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest.updateListTest()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestMethod -->
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2017-08-22T15:11:41Z" finished-at="2017-08-22T15:11:41Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest.searchAlarmInfoListTest()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestMethod -->
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2017-08-22T15:11:41Z" finished-at="2017-08-22T15:11:41Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest.searchAlarmInfoListTest()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestMethod -->
+        <test-method status="PASS" signature="searchAlarmInfoListTest()[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="searchAlarmInfoListTest" duration-ms="286" depends-on-groups="update, add" started-at="2017-08-22T15:11:41Z" finished-at="2017-08-22T15:11:41Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- searchAlarmInfoListTest -->
+        <test-method status="PASS" signature="searchAlarmInfoListTest()[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="searchAlarmInfoListTest" duration-ms="326" depends-on-groups="update, add" started-at="2017-08-22T15:11:41Z" finished-at="2017-08-22T15:11:41Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- searchAlarmInfoListTest -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2017-08-22T15:11:41Z" finished-at="2017-08-22T15:11:41Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest.searchAlarmInfoListTest()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestMethod -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2017-08-22T15:11:41Z" finished-at="2017-08-22T15:11:41Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest.searchAlarmInfoListTest()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestMethod -->
+        <test-method status="PASS" signature="deleteAlarmInfoListTest()[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="deleteAlarmInfoListTest" duration-ms="88" depends-on-groups="update, query" started-at="2017-08-22T15:11:41Z" finished-at="2017-08-22T15:11:41Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- deleteAlarmInfoListTest -->
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2017-08-22T15:11:41Z" finished-at="2017-08-22T15:11:41Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest.deleteAlarmInfoListTest()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestMethod -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2017-08-22T15:11:41Z" finished-at="2017-08-22T15:11:41Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest.deleteAlarmInfoListTest()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestMethod -->
+        <test-method status="PASS" signature="springTestContextAfterTestClass()[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]" name="springTestContextAfterTestClass" is-config="true" duration-ms="1" started-at="2017-08-22T15:11:41Z" finished-at="2017-08-22T15:11:41Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestClass -->
+      </class> <!-- whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>

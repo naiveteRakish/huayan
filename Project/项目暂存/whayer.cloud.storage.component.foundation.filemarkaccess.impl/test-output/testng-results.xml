@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="4" passed="4">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Default suite" duration-ms="2082" started-at="2017-08-29T06:18:43Z" finished-at="2017-08-29T06:18:45Z">
+    <groups>
+      <group name="update">
+        <method signature="FileMarkAccessTest.modify()[pri:0, instance:whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest@6ce61eb5]" name="modify" class="whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest"/>
+      </group> <!-- update -->
+      <group name="query">
+        <method signature="FileMarkAccessTest.queryFileInfoSize()[pri:0, instance:whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest@6ce61eb5]" name="queryFileInfoSize" class="whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest"/>
+      </group> <!-- query -->
+      <group name="delete">
+        <method signature="FileMarkAccessTest.deleteFileInfo()[pri:0, instance:whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest@6ce61eb5]" name="deleteFileInfo" class="whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest"/>
+      </group> <!-- delete -->
+      <group name="add">
+        <method signature="FileMarkAccessTest.sigleSave()[pri:0, instance:whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest@6ce61eb5]" name="sigleSave" class="whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest"/>
+      </group> <!-- add -->
+    </groups>
+    <test name="Default test" duration-ms="2082" started-at="2017-08-29T06:18:43Z" finished-at="2017-08-29T06:18:45Z">
+      <class name="whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest">
+        <test-method status="PASS" signature="beforeTest()[pri:0, instance:whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest@6ce61eb5]" name="beforeTest" is-config="true" duration-ms="353" started-at="2017-08-29T14:18:43Z" finished-at="2017-08-29T14:18:44Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- beforeTest -->
+        <test-method status="PASS" signature="sigleSave()[pri:0, instance:whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest@6ce61eb5]" name="sigleSave" duration-ms="1600" started-at="2017-08-29T14:18:44Z" finished-at="2017-08-29T14:18:45Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- sigleSave -->
+        <test-method status="PASS" signature="modify()[pri:0, instance:whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest@6ce61eb5]" name="modify" duration-ms="36" depends-on-groups="add" started-at="2017-08-29T14:18:45Z" finished-at="2017-08-29T14:18:45Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- modify -->
+        <test-method status="PASS" signature="queryFileInfoSize()[pri:0, instance:whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest@6ce61eb5]" name="queryFileInfoSize" duration-ms="16" depends-on-groups="update" started-at="2017-08-29T14:18:45Z" finished-at="2017-08-29T14:18:45Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- queryFileInfoSize -->
+        <test-method status="PASS" signature="deleteFileInfo()[pri:0, instance:whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest@6ce61eb5]" name="deleteFileInfo" duration-ms="54" depends-on-groups="query" started-at="2017-08-29T14:18:45Z" finished-at="2017-08-29T14:18:45Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- deleteFileInfo -->
+      </class> <!-- whayer.cloud.storage.component.foundation.filemarkaccess.test.FileMarkAccessTest -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>

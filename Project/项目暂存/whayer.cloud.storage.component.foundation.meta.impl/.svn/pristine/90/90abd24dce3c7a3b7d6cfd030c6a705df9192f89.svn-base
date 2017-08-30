@@ -1,0 +1,470 @@
+package com.whayer.cloud.storage.component.foundation.meta.impl;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+
+import whayer.cloud.framework.data.db.dao.HibernateDao;
+import whayer.cloud.framework.data.db.dao.IDao;
+import whayer.cloud.framework.data.db.dao.criteria.Criteria;
+import whayer.cloud.framework.data.db.dao.criteria.Restrictions;
+import whayer.cloud.framework.data.db.dao.datasource.DataBaseException;
+import whayer.cloud.framework.data.db.dao.datasource.IDbSession;
+import whayer.cloud.framework.data.db.dao.datasource.IDbSessionFactory;
+import whayer.cloud.utility.core.BeanService;
+
+import com.whayer.cloud.component.objectcache.impl.ObjectCacheService;
+import com.whayer.cloud.storage.business.alarm.data.AlarmMessageLevelMeta;
+import com.whayer.cloud.storage.business.alarm.data.AlarmMessageTypeMeta;
+import com.whayer.cloud.storage.business.base.data.msg.MessageSourceIficationTypeMeta;
+import com.whayer.cloud.storage.business.base.data.msg.MessageSourceTypeMeta;
+import com.whayer.cloud.storage.business.base.data.type.Type;
+import com.whayer.cloud.storage.component.foundation.meta.IMetaDataManager;
+
+public class MetaDataManagerImpl implements IMetaDataManager {
+
+	private IDbSessionFactory factory;
+	private BeanService beanService;
+	private ObjectCacheService objectCacheService;
+	private ExecutorService executorService;
+	// redis重复次数 默认10
+	private static Integer REPETITIONTIME = 10;
+
+	/**
+	 * @return the rEPETITIONTIME
+	 */
+	public static Integer getREPETITIONTIME() {
+		return REPETITIONTIME;
+	}
+
+	/**
+	 * @param rEPETITIONTIME the rEPETITIONTIME to set
+	 */
+	public static void setREPETITIONTIME(Integer rEPETITIONTIME) {
+		REPETITIONTIME = rEPETITIONTIME;
+	}
+
+	/**
+	 * @return the factory
+	 */
+	public IDbSessionFactory getFactory() {
+		return factory;
+	}
+
+	/**
+	 * @param factory the factory to set
+	 */
+	public void setFactory(IDbSessionFactory factory) {
+		this.factory = factory;
+	}
+
+	/**
+	 * @return the beanService
+	 */
+	public BeanService getBeanService() {
+		return beanService;
+	}
+
+	/**
+	 * @param beanService the beanService to set
+	 */
+	public void setBeanService(BeanService beanService) {
+		this.beanService = beanService;
+	}
+
+	/**
+	 * @return the objectCacheService
+	 */
+	public ObjectCacheService getObjectCacheService() {
+		return objectCacheService;
+	}
+
+	/**
+	 * @param objectCacheService the objectCacheService to set
+	 */
+	public void setObjectCacheService(ObjectCacheService objectCacheService) {
+		this.objectCacheService = objectCacheService;
+	}
+
+	/**
+	 * @return the executorService
+	 */
+	public ExecutorService getExecutorService() {
+		return executorService;
+	}
+
+	/**
+	 * @param executorService the executorService to set
+	 */
+	public void setExecutorService(ExecutorService executorService) {
+		this.executorService = executorService;
+	}
+
+	private void executeCache(Runnable runnable) {
+		executorService.execute(runnable);
+	}
+
+	/**
+	 * 生成该对象的rediskey
+	 * @Title: getRedisKey
+	 * @param item
+	 * @return String
+	 * @see 
+	 * @throws
+	 * @author Administrator
+	 */
+	private <T> String getRedisKey(T item) {
+		StringBuilder sb = new StringBuilder(
+				"COM.WHAYER.CLOUD.STORAGE.COMPONENT.FOUNDATION.META.IMPL.METADATAMANAGERIMPL");
+		sb.append(item.getClass().getName().toUpperCase());
+		return sb.toString();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> boolean addMetaData(final T item) {
+		if (!(item instanceof AlarmMessageLevelMeta || item instanceof AlarmMessageTypeMeta
+				|| item instanceof MessageSourceIficationTypeMeta || item instanceof MessageSourceTypeMeta)) {
+			return false;
+		}
+		IDbSession session = null;
+		boolean result = true;
+		try {
+			session = factory.getSession();
+			IDao dao = beanService.getBean(HibernateDao.class);
+			session.beginTransaction();
+			dao.setSession(session);
+			dao.insert(item);
+			session.commit();
+		} catch (Exception e) {
+			result = false;
+			e.printStackTrace();
+		} finally {
+			if (result) {
+				// 执行缓存
+				executeCache(new Runnable() {
+
+					@Override
+					public void run() {
+						for (int j = 0; !objectCacheService.addListObjectItem(getRedisKey(item), item)
+								&& j != REPETITIONTIME; j++)
+							;
+					}
+				});
+
+			}
+			try {
+				if (session != null) {
+					session.rollback();
+				}
+			} catch (DataBaseException e) {
+
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> boolean addMetaDatas(final List<T> items) {
+		for (int i = 0; i < items.size(); i++) {
+			T item = items.get(i);
+			if (!(item instanceof AlarmMessageLevelMeta || item instanceof AlarmMessageTypeMeta
+					|| item instanceof MessageSourceIficationTypeMeta || item instanceof MessageSourceTypeMeta)) {
+				return false;
+			}
+		}
+		IDbSession session = null;
+		boolean result = true;
+		try {
+			session = factory.getSession();
+			session.beginTransaction();
+			IDao dao = beanService.getBean(HibernateDao.class);
+			dao.setSession(session);
+			dao.insert(items);
+			session.commit();
+		} catch (Exception e) {
+			result = false;
+			e.printStackTrace();
+		} finally {
+			if (result) {
+				// 执行缓存
+				executeCache(new Runnable() {
+
+					@Override
+					public void run() {
+						LinkedList<T> linkedList = new LinkedList<T>();
+						for (int i = 0; i < items.size(); i++) {
+							if (!objectCacheService.addListObjectItem(getRedisKey(items.get(i)), items.get(i))) {
+								// 添加失败的，存入失败列表。
+								linkedList.add(items.get(i));
+							}
+						}
+						while (linkedList.size() > 0) {
+							int i = 0;
+							for (int j = 0; j < linkedList.size(); j++) {
+								if (objectCacheService.addListObjectItem(getRedisKey(linkedList.get(j)),
+										linkedList.get(j))) {
+									// 重试成功，从失败列表移除
+									linkedList.remove(j);
+									j--;
+								}
+							}
+							i++;
+							if (linkedList.size() * REPETITIONTIME == i) {
+								// 每条数据重试超过10次 则放弃继续执行
+								break;
+							}
+						}
+					}
+				});
+			}
+			try {
+				if (session != null) {
+					session.rollback();
+				}
+			} catch (DataBaseException e) {
+
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> boolean modifyMetaData(final T item) {
+
+		if (!(item instanceof AlarmMessageLevelMeta || item instanceof AlarmMessageTypeMeta
+				|| item instanceof MessageSourceIficationTypeMeta || item instanceof MessageSourceTypeMeta)) {
+			return false;
+		}
+
+		IDbSession session = null;
+		boolean result = true;
+		try {
+			session = factory.getSession();
+			session.clear();
+			session.beginTransaction();
+			IDao dao = beanService.getBean(HibernateDao.class);
+			dao.setSession(session);
+			dao.update(item);
+			session.commit();
+		} catch (Exception e) {
+			result = false;
+			e.printStackTrace();
+		} finally {
+			if (result) {
+
+				// 执行缓存
+				executeCache(new Runnable() {
+					@Override
+					public void run() {
+						Map<Integer, ? extends Object> map = objectCacheService.indexListObjectItem(getRedisKey(item),
+								item.getClass(), "id", ((Type) item).getId());
+						Integer keyInteger = null;
+						for (Map.Entry entry : map.entrySet()) {
+							keyInteger = (Integer) entry.getKey();
+						}
+						for (int j = 0; !objectCacheService.replaceListObjectItem(getRedisKey(item), keyInteger, item)
+								&& j != REPETITIONTIME; j++)
+							;
+					}
+				});
+			}
+			try {
+				if (session != null) {
+					session.rollback();
+				}
+			} catch (DataBaseException e) {
+
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
+	}
+
+	@Override
+	public <T> boolean deleteMetaData(final Class<T> type, final String id) {
+		if (!(type.getClass().getName().equals("AlarmMessageLevelMeta")
+				|| type.getClass().getName().equals("AlarmMessageTypeMeta")
+				|| type.getClass().getName().equals("MessageSourceIficationTypeMeta") || type.getClass().getName()
+				.equals("MessageSourceTypeMeta"))) {
+			return false;
+		}
+		IDbSession session = null;
+		boolean result = true;
+		try {
+			session = factory.getSession();
+			session.clear();
+			session.beginTransaction();
+			IDao dao = beanService.getBean(HibernateDao.class);
+			dao.setSession(session);
+			dao.delete(type, id);
+			session.commit();
+		} catch (Exception e) {
+			result = false;
+			e.printStackTrace();
+		} finally {
+			if (result) {
+				// 执行缓存
+				executeCache(new Runnable() {
+					@Override
+					public void run() {
+						for (int j = 0; !objectCacheService.removeListObjectItem(getRedisKey(type), "id", id)
+								&& j != REPETITIONTIME; j++)
+							;
+
+					}
+				});
+			}
+			try {
+				if (session != null) {
+					session.rollback();
+				}
+			} catch (DataBaseException e) {
+
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
+	}
+
+	@Override
+	public <T> boolean deleteMetaData(final Class<T> type) {
+		if (!(type.getClass().getName().equals("AlarmMessageLevelMeta")
+				|| type.getClass().getName().equals("AlarmMessageTypeMeta")
+				|| type.getClass().getName().equals("MessageSourceIficationTypeMeta") || type.getClass().getName()
+				.equals("MessageSourceTypeMeta"))) {
+			return false;
+		}
+		IDbSession session = null;
+		boolean result = true;
+		try {
+			session = factory.getSession();
+			session.clear();
+			session.beginTransaction();
+			IDao dao = beanService.getBean(HibernateDao.class);
+			dao.setSession(session);
+			dao.delete(type);
+			session.commit();
+		} catch (Exception e) {
+			result = false;
+			e.printStackTrace();
+		} finally {
+			if (result) {
+				// 执行缓存
+				executeCache(new Runnable() {
+
+					@Override
+					public void run() {
+						for (int j = 0; !objectCacheService.deleteListObject(getRedisKey(type)) && j != REPETITIONTIME; j++)
+							;
+					}
+				});
+			}
+			try {
+				if (session != null) {
+					session.rollback();
+				}
+			} catch (DataBaseException e) {
+
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
+	}
+
+	@Override
+	public <T> T getMetaData(Class<T> type, String id) {
+
+		IDbSession session = null;
+		T result = null;
+		if (!(type.getClass().getName().equals("AlarmMessageLevelMeta")
+				|| type.getClass().getName().equals("AlarmMessageTypeMeta")
+				|| type.getClass().getName().equals("MessageSourceIficationTypeMeta") || type.getClass().getName()
+				.equals("MessageSourceTypeMeta"))) {
+			return result;
+		}
+		// 查询缓存
+		result = objectCacheService.getObject(getRedisKey(type), type);
+
+		if (result == null) {
+
+			try {
+				session = factory.getSession();
+				IDao dao = beanService.getBean(HibernateDao.class);
+				dao.setSession(session);
+				dao.selectOne(type, id);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (session != null) {
+						session.rollback();
+					}
+				} catch (DataBaseException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return result;
+	}
+
+	@Override
+	public <T> List<T> getMetaData(Class<T> type, Map<String, String> condition) {
+		IDbSession session = null;
+		List<T> result = null;
+		if (!(type.getClass().getName().equals("AlarmMessageLevelMeta")
+				|| type.getClass().getName().equals("AlarmMessageTypeMeta")
+				|| type.getClass().getName().equals("MessageSourceIficationTypeMeta") || type.getClass().getName()
+				.equals("MessageSourceTypeMeta"))) {
+			return result;
+		}
+		Criteria where = new Criteria();
+		for (Map.Entry<String, String> entry : condition.entrySet()) {
+			if (entry.getValue() != null && !"".equals(entry.getValue().trim())) {
+				where.add(Restrictions.eq(type, entry.getKey(), entry.getValue().trim()));
+			}
+		}
+
+		// TODO 查询缓存 等待接口
+
+		if (result == null) {
+
+			try {
+				session = factory.getSession();
+				IDao dao = beanService.getBean(HibernateDao.class);
+				dao.setSession(session);
+				result = dao.selectList(type, null, where);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (session != null) {
+						session.rollback();
+					}
+				} catch (DataBaseException e) {
+
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return result;
+	}
+
+}

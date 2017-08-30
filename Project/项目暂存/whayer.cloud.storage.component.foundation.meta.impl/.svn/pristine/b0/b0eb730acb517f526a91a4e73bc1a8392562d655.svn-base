@@ -1,0 +1,320 @@
+package com.whayer.cloud.storage.component.foundation.meta.impl;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+
+import whayer.cloud.framework.data.db.dao.HibernateDao;
+import whayer.cloud.framework.data.db.dao.IDao;
+import whayer.cloud.framework.data.db.dao.criteria.Criteria;
+import whayer.cloud.framework.data.db.dao.criteria.Restrictions;
+import whayer.cloud.framework.data.db.dao.datasource.DataBaseException;
+import whayer.cloud.framework.data.db.dao.datasource.IDbSession;
+import whayer.cloud.framework.data.db.dao.datasource.IDbSessionFactory;
+import whayer.cloud.utility.core.BeanService;
+
+import com.whayer.cloud.component.objectcache.impl.ObjectCacheService;
+import com.whayer.cloud.storage.component.foundation.meta.IMetaDataManager;
+
+public class MetaDataManagerImpl implements IMetaDataManager {
+
+	private IDbSessionFactory factory;
+	private BeanService beanService;
+	private ObjectCacheService objectCacheService;
+	private ExecutorService executorService;
+
+	/**
+	 * @return the factory
+	 */
+	public IDbSessionFactory getFactory() {
+		return factory;
+	}
+
+	/**
+	 * @param factory the factory to set
+	 */
+	public void setFactory(IDbSessionFactory factory) {
+		this.factory = factory;
+	}
+
+	/**
+	 * @return the beanService
+	 */
+	public BeanService getBeanService() {
+		return beanService;
+	}
+
+	/**
+	 * @param beanService the beanService to set
+	 */
+	public void setBeanService(BeanService beanService) {
+		this.beanService = beanService;
+	}
+
+	/**
+	 * @return the objectCacheService
+	 */
+	public ObjectCacheService getObjectCacheService() {
+		return objectCacheService;
+	}
+
+	/**
+	 * @param objectCacheService the objectCacheService to set
+	 */
+	public void setObjectCacheService(ObjectCacheService objectCacheService) {
+		this.objectCacheService = objectCacheService;
+	}
+
+	/**
+	 * @return the executorService
+	 */
+	public ExecutorService getExecutorService() {
+		return executorService;
+	}
+
+	/**
+	 * @param executorService the executorService to set
+	 */
+	public void setExecutorService(ExecutorService executorService) {
+		this.executorService = executorService;
+	}
+
+	private <T> void executeCache(Class<T> type) {
+		String redisKey = getRedisKey(type);
+		executorService.execute(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
+	}
+
+	/**
+	 * 生成该类操作对象的rediskey
+	 * @Title: getRedisKey
+	 * @param type
+	 * @return String
+	 * @see 
+	 * @throws
+	 * @author Administrator
+	 */
+	private <T> String getRedisKey(Class<T> type) {
+		StringBuilder sb = new StringBuilder(
+				"COM.WHAYER.CLOUD.STORAGE.COMPONENT.FOUNDATION.META.IMPL.METADATAMANAGERIMPL");
+		sb.append(type.getClass().getName().toUpperCase());
+		return sb.toString();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> boolean addMetaData(T item) {
+		IDbSession session = null;
+		boolean result = true;
+		try {
+			session = factory.getSession();
+			IDao dao = beanService.getBean(HibernateDao.class);
+			dao.setSession(session);
+			dao.insert(item);
+		} catch (Exception e) {
+			result = false;
+			e.printStackTrace();
+		} finally {
+			if (result) {
+				// 执行缓存
+			}
+			try {
+				session.rollback();
+			} catch (DataBaseException e) {
+
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> boolean addMetaDatas(List<T> items) {
+		IDbSession session = null;
+		boolean result = true;
+		try {
+			session = factory.getSession();
+			IDao dao = beanService.getBean(HibernateDao.class);
+			dao.setSession(session);
+			dao.insert(items);
+		} catch (Exception e) {
+			result = false;
+			e.printStackTrace();
+		} finally {
+			if (result) {
+				// 执行缓存
+			}
+			try {
+				session.rollback();
+			} catch (DataBaseException e) {
+
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> boolean modifyMetaData(T item) {
+		IDbSession session = null;
+		boolean result = true;
+		try {
+			session = factory.getSession();
+			IDao dao = beanService.getBean(HibernateDao.class);
+			dao.setSession(session);
+			dao.update(item);
+		} catch (Exception e) {
+			result = false;
+			e.printStackTrace();
+		} finally {
+			if (result) {
+				// 执行缓存
+			}
+			try {
+				session.rollback();
+			} catch (DataBaseException e) {
+
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
+	}
+
+	@Override
+	public <T> boolean deleteMetaData(Class<T> type, String id) {
+		IDbSession session = null;
+		boolean result = true;
+		try {
+			session = factory.getSession();
+			IDao dao = beanService.getBean(HibernateDao.class);
+			dao.setSession(session);
+			dao.delete(type, id);
+		} catch (Exception e) {
+			result = false;
+			e.printStackTrace();
+		} finally {
+			if (result) {
+				// 执行缓存
+			}
+			try {
+				session.rollback();
+			} catch (DataBaseException e) {
+
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
+	}
+
+	@Override
+	public <T> boolean deleteMetaData(Class<T> type) {
+		IDbSession session = null;
+		boolean result = true;
+		try {
+			session = factory.getSession();
+			IDao dao = beanService.getBean(HibernateDao.class);
+			dao.setSession(session);
+			dao.delete(type);
+		} catch (Exception e) {
+			result = false;
+			e.printStackTrace();
+		} finally {
+			if (result) {
+				// 执行缓存
+			}
+			try {
+				session.rollback();
+			} catch (DataBaseException e) {
+
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
+	}
+
+	@Override
+	public <T> T getMetaData(Class<T> type, String id) {
+		IDbSession session = null;
+		T result = null;
+		// 查询缓存
+		result = objectCacheService.getObject(getRedisKey(type), type);
+
+		if (result == null) {
+
+			try {
+				session = factory.getSession();
+				IDao dao = beanService.getBean(HibernateDao.class);
+				dao.setSession(session);
+				dao.selectOne(type, id);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					session.rollback();
+				} catch (DataBaseException e) {
+
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return result;
+	}
+
+	@Override
+	public <T> List<T> getMetaData(Class<T> type, Map<String, String> condition) {
+		IDbSession session = null;
+		List<T> result = null;
+		Criteria where = new Criteria();
+
+		for (Map.Entry<String, String> entry : condition.entrySet()) {
+			System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+			if (entry.getValue() != null && !"".equals(entry.getValue().trim())) {
+				where.add(Restrictions.eq(type, entry.getKey(), entry.getValue().trim()));
+			}
+		}
+
+		// 查询缓存
+
+		if (result == null) {
+
+			try {
+				session = factory.getSession();
+				IDao dao = beanService.getBean(HibernateDao.class);
+				dao.setSession(session);
+				result = dao.selectList(type, null, where);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					session.rollback();
+				} catch (DataBaseException e) {
+
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return result;
+	}
+
+}

@@ -1,0 +1,127 @@
+package com.whayer.cloud.storage.business.device.data;
+
+import com.whayer.cloud.storage.business.base.data.Business;
+
+/**
+ * @ClassName: BaseControlCenter
+ * TODO (集控中心基础对象)
+ * @author fsong
+ * @date 2017年7月19日 下午12:54:50
+ * @version v1.0.0
+ * 
+ */
+public class BaseControlCenterInfo  extends Business {
+	/**
+	 * @Fields parentId : TODO (上级集控中心ID)
+	 */
+	private String parentId;
+	/**
+	 * @Fields code : TODO (集控中心编码)
+	 */
+	private String code;
+
+	/**
+	 * @Fields name : TODO (集控中心名称)
+	 */
+	private String name;
+
+	/**
+	 * @Fields desc : TODO (集控中心描述)
+	 */
+	private String desc;
+
+	/**
+	 * @Fields remark : TODO (集控中心备注)
+	 */
+	private String remark;
+
+	/**
+	 * @Fields typeCode : TODO (集控中心类型编码)
+	 */
+	private String typeCode;
+
+	/**
+	 * @return the code
+	 */
+	public String getCode() {
+		return code;
+	}
+
+	/**
+	 * @param code the code to set
+	 */
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * @return the desc
+	 */
+	public String getDesc() {
+		return desc;
+	}
+
+	/**
+	 * @param desc the desc to set
+	 */
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
+
+	/**
+	 * @return the remark
+	 */
+	public String getRemark() {
+		return remark;
+	}
+
+	/**
+	 * @param remark the remark to set
+	 */
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	/**
+	 * @return the typeCode
+	 */
+	public String getTypeCode() {
+		return typeCode;
+	}
+
+	/**
+	 * @param typeCode the typeCode to set
+	 */
+	public void setTypeCode(String typeCode) {
+		this.typeCode = typeCode;
+	}
+
+	/**
+	 * @return the parentId
+	 */
+	public String getParentId() {
+		return parentId;
+	}
+
+	/**
+	 * @param parentId the parentId to set
+	 */
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
+	}
+
+}

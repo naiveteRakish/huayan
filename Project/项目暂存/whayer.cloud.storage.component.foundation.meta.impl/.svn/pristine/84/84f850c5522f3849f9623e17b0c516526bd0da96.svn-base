@@ -1,0 +1,82 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd">
+                        
+    <bean id="beanService" class="whayer.cloud.utility.core.BeanService">
+		
+	</bean>
+	
+	<bean id="hibernateSessionFacotry" class="whayer.cloud.framework.data.db.dao.datasource.HibernateDbSessionFactory">
+		
+	</bean>
+	
+	<bean id="hibernateDbAdmin" class="whayer.cloud.framework.data.db.dao.metadata.HibernateDbAdmin" scope="prototype">
+		
+	</bean>
+	<bean id="hibernateDAO" class="whayer.cloud.framework.data.db.dao.HibernateDao" scope="prototype"></bean>
+	
+	<bean id="objectCacheService" class="com.whayer.cloud.component.objectcache.impl.ObjectCacheService"></bean>
+	<bean id="metaTimingCacheService" class="com.whayer.cloud.storage.component.foundation.meta.impl.MetaTimingCacheServiceImpl" init-method="init">
+		<property name="metaCacheService" ref="metaCacheService"></property>
+	</bean>
+	
+	<!--缓存同步接口  -->	
+	<bean id="metaCacheService" class="com.whayer.cloud.storage.component.foundation.meta.impl.MetaCacheServiceImpl" init-method="checkBean">
+		<property name="objectCacheService" ref="objectCacheService"></property>
+		<property name="threadPoolExecutor" ref="redisCache"></property>
+		<property name="metaTimingCacheService" ref="metaTimingCacheService"></property>
+	</bean>	
+		
+	<bean id="minutes" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">    
+	        <property name="staticField" value="java.util.concurrent.TimeUnit.MINUTES" />    
+	</bean>
+	 <bean id="synchronousQueue" class="java.util.concurrent.SynchronousQueue">
+	</bean>
+							<!--  int corePoolSize,
+                              int maximumPoolSize,
+                              long keepAliveTime,
+                              TimeUnit unit,
+                              BlockingQueue<Runnable> workQueue -->
+	<!-- <bean id="redisCache" class="com.whayer.cloud.storage.component.foundation.meta.impl.RedisThreadPoolExecutor">
+		 当前配置的线程池 和java里的cache可缓冲线程池 是一样的  (任务队列最大值为int最大值，线程池最大线程也为int最大值)
+		 <constructor-arg index="0"  value="0"/>
+      	 <constructor-arg index="1"  value="0x7fffffff"/>
+      	 <constructor-arg index="2"  value="5"/>
+      	 <constructor-arg index="3"  ref="minutes"/>
+      	 <constructor-arg index="4"  ref="synchronousQueue" />
+	</bean> -->
+	<bean id="linkedBlockingQueue" class="java.util.concurrent.LinkedBlockingQueue">
+	</bean>
+	<bean id="redisCache" class="com.whayer.cloud.storage.component.foundation.meta.impl.RedisThreadPoolExecutor">
+		 <!--当前配置的线程池 和java里的cache可缓冲线程池 是一样的  (任务队列最大值为int最大值，线程池最大线程也为int最大值)-->
+		 <constructor-arg index="0"  value="1"/>
+      	 <constructor-arg index="1"  value="1"/>
+      	 <constructor-arg index="2"  value="5"/>
+      	 <constructor-arg index="3"  ref="minutes"/>
+      	 <constructor-arg index="4"  ref="linkedBlockingQueue" />
+	</bean>
+	
+	
+	
+	<bean id="metaDataManagerImpl" class="com.whayer.cloud.storage.component.foundation.meta.impl.MetaDataServiceImpl">
+		<property name="factory" ref="hibernateSessionFacotry" />
+		<property name="beanService" ref="beanService" />
+		<property name="threadPoolExecutor" ref="redisCache" />
+		<property name="iMetaCacheService" ref="metaCacheService" />
+		<property name="objectCacheService" ref="objectCacheService" />
+		<property name="metaTimingCacheService" ref="metaTimingCacheService"/>
+		<property name="typeList">
+            <list>
+                <value>com.whayer.cloud.storage.business.alarm.data.AlarmMessageLevelMeta</value>
+                <value>com.whayer.cloud.storage.business.alarm.data.AlarmMessageTypeMeta</value>
+                <value>com.whayer.cloud.storage.business.base.data.msg.MessageSourceIficationTypeMeta</value>
+                <value>com.whayer.cloud.storage.business.base.data.msg.MessageSourceTypeMeta</value>
+                <value>com.whayer.cloud.storage.business.base.data.res.ProtocolTypeMeta</value>
+                <value>com.whayer.cloud.storage.business.base.data.res.AreaTypeMeta</value>
+                <value>com.whayer.cloud.storage.business.device.data.DeviceTypeMeta</value>
+            </list>
+        </property>
+        <!--缓存失败 重复次数默认不重复  -->
+	</bean>
+</beans>

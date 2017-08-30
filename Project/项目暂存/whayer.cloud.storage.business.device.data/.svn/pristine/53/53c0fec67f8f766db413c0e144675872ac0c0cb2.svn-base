@@ -1,0 +1,33 @@
+package com.whayer.cloud.storage.business.device.data;
+
+import com.whayer.cloud.storage.business.base.data.Business;
+
+/**
+ * @ClassName: BaseProtocolObject
+ * TODO (协议配置基类对象)
+ * @author fsong
+ * @date 2017年7月19日 上午10:17:03
+ * @version v1.0.0
+ * 
+ */
+public class BaseProtocolInfo extends Business {
+	/**
+	 * @Fields name : TODO (协议名称)
+	 */
+	private String name;
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+}

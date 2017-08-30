@@ -1,0 +1,113 @@
+/**  
+ *设备接口
+ * @Title: DeviceTypeMetaPojo.java
+ * @Package com.whayer.cloud.storage.component.device.deviceaccess.beans
+ * @author Administrator
+ * @date 2017年8月16日 下午3:45:15
+ * @version v1.0.0
+ */
+package com.whayer.cloud.storage.component.foundation.meta.beans;
+
+/**
+ * 设备类型元数据业务对象
+ * @ClassName: DeviceTypeMetaPojo
+ * @author Administrator
+ * @date 2017年8月16日 下午3:45:15
+ * @version v1.0.0
+ * 
+ */
+public class DeviceTypeMetaPojo {
+	/**
+	 * 类型ID
+	 */
+	protected String id;
+	/**
+	 * 类型编码
+	 */
+	protected String code;
+	/**
+	 * 类型名称
+	 */
+	protected String name;
+	/**
+	 * 类型名称描述
+	 */
+	protected String desc;
+	/**
+	 * 父类型ID
+	 */
+	protected String parentId;
+
+	/**
+	 * 获取
+	 * 
+	 * @return id
+	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * @return the code
+	 */
+	public String getCode() {
+		return code;
+	}
+
+	/**
+	 * @param code the code to set
+	 */
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * @return the desc
+	 */
+	public String getDesc() {
+		return desc;
+	}
+
+	/**
+	 * @param desc the desc to set
+	 */
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
+
+	/**
+	 * @return the parentId
+	 */
+	public String getParentId() {
+		return parentId;
+	}
+
+	/**
+	 * @param parentId the parentId to set
+	 */
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(String id) {
+		this.id = id;
+	}
+
+}

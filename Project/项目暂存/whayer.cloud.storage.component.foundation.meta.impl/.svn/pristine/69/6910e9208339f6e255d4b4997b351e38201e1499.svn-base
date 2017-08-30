@@ -1,0 +1,52 @@
+package com.whayer.cloud.storage.component.foundation.meta.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import com.whayer.cloud.storage.component.foundation.meta.IMetaDataManager;
+
+public class MetaDataManagerImpl implements IMetaDataManager{
+
+	@Override
+	public <T> boolean addMetaData(T item) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public <T> boolean addMetaDatas(List<T> items) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public <T> boolean modifyMetaData(T item) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public <T> boolean deleteMetaData(Class<T> type, String id) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public <T> boolean deleteMetaData(Class<T> type) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public <T> T getMetaData(Class<T> type, String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T> List<T> getMetaData(Class<T> type, Map<String, String> condition) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

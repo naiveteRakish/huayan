@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+     <dataSource>
+         <property name="url" value="jdbc:impala://cm3:21050/ttt;AuthMech=0;UID=cloudera-scm;PWD=123456;" />
+         <property name="kuduServerName" value="cm2"/>
+         <property name="kuduServerPort" value="7051"/>
+     </dataSource>
+</configuration>

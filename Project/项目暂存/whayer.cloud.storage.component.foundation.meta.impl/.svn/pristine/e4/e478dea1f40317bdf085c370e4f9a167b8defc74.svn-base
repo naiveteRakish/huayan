@@ -1,0 +1,238 @@
+/**  
+ * 元数据管理
+ * @Title: MetaTimingCacheServiceImpl.java
+ * @Package com.whayer.cloud.storage.component.foundation.meta.impl
+ * @author Administrator
+ * @date 2017年8月16日 上午11:37:52
+ * @version v1.0.0
+ */
+package com.whayer.cloud.storage.component.foundation.meta.impl;
+
+import java.util.LinkedList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import whayer.component.core.IService;
+
+import com.whayer.cloud.storage.component.foundation.meta.IMetaCacheService;
+import com.whayer.cloud.storage.component.foundation.meta.IMetaTimingCacheService;
+
+/**
+ * 定时同步器
+ * @ClassName: MetaTimingCacheServiceImpl
+ * @author Administrator
+ * @date 2017年8月16日 上午11:37:52
+ * @version v1.0.0
+ * 
+ */
+public class MetaTimingCacheServiceImpl implements IMetaTimingCacheService, IService {
+
+	@SuppressWarnings("rawtypes")
+	private LinkedList<Object> addLinkedBlockingQueue = new LinkedList();
+	@SuppressWarnings("rawtypes")
+	private LinkedList<Object> updateLinkedBlockingQueue = new LinkedList();
+	@SuppressWarnings("rawtypes")
+	private LinkedList<Object> deleteLinkedBlockingQueue = new LinkedList();
+	private Long delay = 0L;
+	private Long period = 10L;
+	private TimeUnit timeUnit = TimeUnit.SECONDS;
+	private IMetaCacheService metaCacheService;
+	private ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+
+	/**
+	 * @return the addLinkedBlockingQueue
+	 */
+	@Override
+	public LinkedList<Object> getAddLinkedBlockingQueue() {
+		return addLinkedBlockingQueue;
+	}
+
+	/**
+	 * @param addLinkedBlockingQueue the addLinkedBlockingQueue to set
+	 */
+	public void setAddLinkedBlockingQueue(LinkedList<Object> addLinkedBlockingQueue) {
+		this.addLinkedBlockingQueue = addLinkedBlockingQueue;
+	}
+
+	/**
+	 * @return the updateLinkedBlockingQueue
+	 */
+	@Override
+	public LinkedList<Object> getUpdateLinkedBlockingQueue() {
+		return updateLinkedBlockingQueue;
+	}
+
+	/**
+	 * @param updateLinkedBlockingQueue the updateLinkedBlockingQueue to set
+	 */
+	public void setUpdateLinkedBlockingQueue(LinkedList<Object> updateLinkedBlockingQueue) {
+		this.updateLinkedBlockingQueue = updateLinkedBlockingQueue;
+	}
+
+	/**
+	 * @return the deleteLinkedBlockingQueue
+	 */
+	@Override
+	public LinkedList<Object> getDeleteLinkedBlockingQueue() {
+		return deleteLinkedBlockingQueue;
+	}
+
+	/**
+	 * @param deleteLinkedBlockingQueue the deleteLinkedBlockingQueue to set
+	 */
+	public void setDeleteLinkedBlockingQueue(LinkedList<Object> deleteLinkedBlockingQueue) {
+		this.deleteLinkedBlockingQueue = deleteLinkedBlockingQueue;
+	}
+
+	/**
+	 * @return the delay
+	 */
+	public Long getDelay() {
+		return delay;
+	}
+
+	/**
+	 * @param delay the delay to set
+	 */
+	public void setDelay(Long delay) {
+		this.delay = delay;
+	}
+
+	/**
+	 * @return the period
+	 */
+	public Long getPeriod() {
+		return period;
+	}
+
+	/**
+	 * @param period the period to set
+	 */
+	public void setPeriod(Long period) {
+		this.period = period;
+	}
+
+	/**
+	 * @return the timeUnit
+	 */
+	public TimeUnit getTimeUnit() {
+		return timeUnit;
+	}
+
+	/**
+	 * @param timeUnit the timeUnit to set
+	 */
+	public void setTimeUnit(TimeUnit timeUnit) {
+		this.timeUnit = timeUnit;
+	}
+
+	/**
+	 * @return the metaCacheService
+	 */
+	public IMetaCacheService getMetaCacheService() {
+		return metaCacheService;
+	}
+
+	/**
+	 * @param metaCacheService the metaCacheService to set
+	 */
+	public void setMetaCacheService(IMetaCacheService metaCacheService) {
+		this.metaCacheService = metaCacheService;
+	}
+
+	@Override
+	public void start() {
+		// 需要测试 添加 和 获取并移除 还有读取长度 会不会出现线程问题 因为这是线程不安全的
+		// addLinkedBlockingQueue = (LinkedList<Object>)
+		// Collections.synchronizedList(addLinkedBlockingQueue);
+		// updateLinkedBlockingQueue = (LinkedList<Object>)
+		// Collections.synchronizedList(updateLinkedBlockingQueue);
+		// deleteLinkedBlockingQueue = (LinkedList<Object>)
+		// Collections.synchronizedList(deleteLinkedBlockingQueue);
+		initDddLinkedBlockingQueueTask();
+		initUpadateLinkedBlockingQueueTask();
+		initDeleteLinkedBlockingQueueTask();
+	}
+
+	/**
+	 *初始化任务
+	 * @Title: initDeleteLinkedBlockingQueueTask void
+	 * @see 
+	 * @throws
+	 * @author Administrator
+	 */
+	private void initDeleteLinkedBlockingQueueTask() {
+		service.scheduleAtFixedRate(new Runnable() {
+
+			@Override
+			public void run() {
+				if (!deleteLinkedBlockingQueue.isEmpty()) {
+					for (int i = 0; i < deleteLinkedBlockingQueue.size(); i++) {
+						Object item = deleteLinkedBlockingQueue.poll();
+						if (item != null)
+							metaCacheService.deleteMetaCache(item);
+					}
+				}
+			}
+		}, delay, period, timeUnit);
+
+	}
+
+	/**
+	 * 初始化任务
+	 * @Title: initUpadateLinkedBlockingQueueTask void
+	 * @see 
+	 * @throws
+	 * @author Administrator
+	 */
+	private void initUpadateLinkedBlockingQueueTask() {
+		service.scheduleAtFixedRate(new Runnable() {
+
+			@Override
+			public void run() {
+				if (!updateLinkedBlockingQueue.isEmpty()) {
+					for (int i = 0; i < updateLinkedBlockingQueue.size(); i++) {
+						Object item = updateLinkedBlockingQueue.poll();
+						if (item != null)
+							metaCacheService.syncMetaCache(item);
+					}
+
+				}
+			}
+		}, delay, period, timeUnit);
+
+	}
+
+	/**
+	 * 初始化任务
+	 * @Title: initDddLinkedBlockingQueueTask void
+	 * @see 
+	 * @throws
+	 * @author Administrator
+	 */
+	private void initDddLinkedBlockingQueueTask() {
+		service.scheduleAtFixedRate(new Runnable() {
+
+			@Override
+			public void run() {
+				if (!addLinkedBlockingQueue.isEmpty()) {
+					for (int i = 0; i < addLinkedBlockingQueue.size(); i++) {
+						Object item = addLinkedBlockingQueue.poll();
+						if (item != null)
+							metaCacheService.syncMetaCache(item);
+					}
+
+				}
+			}
+		}, delay, period, timeUnit);
+
+	}
+
+	@Override
+	public void stop() {
+		service.shutdown();
+
+	}
+
+}

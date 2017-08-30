@@ -1,0 +1,12 @@
+package com.whayer.cloud.storage.business.device.data;
+
+import com.whayer.cloud.storage.business.base.data.type.MultiLevelType;
+
+/**
+ * @author fs
+ * 设备类型元数据业务对象
+ * 
+ */
+public class DeviceTypeMeta extends MultiLevelType {
+
+}

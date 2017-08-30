@@ -1,0 +1,269 @@
+/**  
+ * 元数据同步器
+ * @Title: MetaCacheServiceImpl.java
+ * @Package com.whayer.cloud.storage.component.foundation.meta.impl
+ * @author Administrator
+ * @date 2017年8月14日 下午3:35:25
+ * @version v1.0.0
+ */
+package com.whayer.cloud.storage.component.foundation.meta.impl;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ThreadPoolExecutor;
+
+import com.whayer.cloud.component.objectcache.OCSCondition;
+import com.whayer.cloud.component.objectcache.impl.ObjectCacheService;
+import com.whayer.cloud.storage.component.foundation.meta.IMetaCacheService;
+
+/**
+ * 元数据缓存接口实现类
+ * @ClassName: MetaCacheServiceImpl
+ * @author Administrator
+ * @date 2017年8月14日 下午3:35:25
+ * @version v1.0.0
+ * 
+ */
+public class MetaCacheServiceImpl implements IMetaCacheService {
+
+	// redis服务接口
+	private ObjectCacheService objectCacheService;
+	// 同步redis的线程池
+	private ThreadPoolExecutor threadPoolExecutor;
+	// key前缀
+	private String redisKeyPrefix = "COM.WHAYER.CLOUD.STORAGE.COMPONENT.FOUNDATION.META.IMPL.METADATAMANAGERIMPL";
+	// redis重试次数 默认不重复
+	private Integer REPETITION_TIME = 0;
+
+	/**
+		 * @return the objectCacheService
+		 */
+	public ObjectCacheService getObjectCacheService() {
+		return objectCacheService;
+	}
+
+	/**
+	 * @param objectCacheService the objectCacheService to set
+	 */
+	public void setObjectCacheService(ObjectCacheService objectCacheService) {
+		this.objectCacheService = objectCacheService;
+	}
+
+	/**
+	 * @return the threadPoolExecutor
+	 */
+	public ThreadPoolExecutor getThreadPoolExecutor() {
+		return threadPoolExecutor;
+	}
+
+	/**
+	 * @param threadPoolExecutor the threadPoolExecutor to set
+	 */
+	public void setThreadPoolExecutor(ThreadPoolExecutor threadPoolExecutor) {
+		this.threadPoolExecutor = threadPoolExecutor;
+	}
+
+	@Override
+	public <T> void syncMetaCache(final T item) {
+		threadPoolExecutor.execute(new Runnable() {
+			@Override
+			public void run() {
+				List<OCSCondition> ocsConditions = new ArrayList<OCSCondition>();
+				// 因为传入类型为泛型 并且没有基类 只能制定每个元数据对象 id 都是 "id" 名字
+				try {
+					ocsConditions.add(new OCSCondition("id", OCSCondition.OCSOperator.EQUAL, item.getClass()
+							.getMethod("getId").invoke(item)));
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
+						| NoSuchMethodException | SecurityException e) {
+					e.printStackTrace();
+				}
+				String key = getRedisKey(item.getClass());
+				Map<Integer, ?> map = objectCacheService.indexListObjectItem(key, item.getClass(), ocsConditions);
+				if (map == null || map.isEmpty()) {
+					// key 不存在 进行添加
+					for (int j = 0; !objectCacheService.addListObjectItem(key, item) && j < REPETITION_TIME; j++)
+						;
+				} else if (map != null && !map.isEmpty()) {
+					// key 存在 进行替换
+					Integer keyInteger = null;
+
+					for (Map.Entry<Integer, ?> entry : map.entrySet()) {
+						// 按照类型和id 获取的结果只会有一个
+						keyInteger = (Integer) entry.getKey();
+						break;
+					}
+
+					for (int j = 0; !objectCacheService.replaceListObjectItem(key, keyInteger, item)
+							&& j < REPETITION_TIME; j++)
+						;
+				}
+
+			}
+		});
+
+	}
+
+	@Override
+	public <T> void syncMetaCache(final List<T> items) {
+		threadPoolExecutor.execute(new Runnable() {
+
+			@Override
+			public void run() {
+				LinkedList<T> addlinkedList = new LinkedList<T>();
+				LinkedList<T> updatelinkedList = new LinkedList<T>();
+
+				// 更新
+				for (int i = 0; i < items.size(); i++) {
+					List<OCSCondition> ocsConditions = new ArrayList<OCSCondition>();
+					String key = getRedisKey(items.get(i).getClass());
+
+					// 因为传入类型为泛型 并且没有基类 只能制定每个元数据对象 id 都是 "id" 名字
+					try {
+						ocsConditions.add(new OCSCondition("id", OCSCondition.OCSOperator.EQUAL, items.get(i)
+								.getClass().getMethod("getId").invoke(items.get(i))));
+					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
+							| NoSuchMethodException | SecurityException e) {
+						e.printStackTrace();
+					}
+
+					Map<Integer, ?> map = objectCacheService.indexListObjectItem(key, items.get(i).getClass(),
+							ocsConditions);
+					if (map != null && !map.isEmpty()) {
+						// key 存在 进行更新
+						Integer keyInteger = null;
+
+						for (Map.Entry<Integer, ?> entry : map.entrySet()) {
+							// 按照类型和id 获取的结果只会有一个
+							keyInteger = (Integer) entry.getKey();
+							break;
+						}
+						// 这里不进行单独分组替换失败的，因为该方法是添加方法，不会存在太多误操作
+						for (int j = 0; !objectCacheService.replaceListObjectItem(key, keyInteger, items.get(i))
+								&& j < REPETITION_TIME; j++) {
+							// 添加失败的，存入更新失败列表。
+							updatelinkedList.add(items.get(i));
+						}
+						items.remove(i);
+						i--;
+					}
+				}
+
+				// 添加
+				for (int i = 0; i < items.size(); i++) {
+					if (!objectCacheService.addListObjectItem(getRedisKey(items.get(i).getClass()), items.get(i))) {
+						// 添加失败的，存入失败列表。
+						addlinkedList.add(items.get(i));
+					}
+				}
+				int addMaxTime = addlinkedList.size() * REPETITION_TIME;
+				int updateMaxTime = updatelinkedList.size() * REPETITION_TIME;
+
+				// 重试添加失败队列中的数据
+				while (addlinkedList.size() > 0) {
+					int i = 0;
+					for (int j = 0; j < addlinkedList.size(); j++) {
+						if (objectCacheService.addListObjectItem(getRedisKey(addlinkedList.get(j).getClass()),
+								addlinkedList.get(j))) {
+							// 重试成功，从失败列表移除
+							addlinkedList.remove(j);
+							j--;
+						}
+					}
+					i++;
+					if (addMaxTime < i) {
+						// 每条数据重试大概超过10次 则放弃继续执行
+						break;
+					}
+				}
+				// 重试更新失败队列中的数据
+				while (updatelinkedList.size() > 0) {
+					int i = 0;
+					for (int j = 0; j < updatelinkedList.size(); j++) {
+						if (objectCacheService.addListObjectItem(getRedisKey(updatelinkedList.get(j).getClass()),
+								updatelinkedList.get(j))) {
+							// 重试成功，从更新失败列表移除
+							updatelinkedList.remove(j);
+							j--;
+						}
+					}
+					i++;
+					if (updateMaxTime < i) {
+						// 每条数据重试大概超过10次 则放弃继续执行
+						break;
+					}
+				}
+
+			}
+		});
+
+	}
+
+	@Override
+	public <T> void deleteMetaCache(final T item) {
+		String id = null;
+		final List<OCSCondition> ocsConditions = new ArrayList<OCSCondition>();
+
+		try {
+			id = (String) item.getClass().getMethod("getId").invoke(item);
+			// 因为传入类型为泛型 并且没有基类 只能制定每个元数据对象 id 都是 "id" 名字
+			if (id != null) {
+				ocsConditions.add(new OCSCondition("id", OCSCondition.OCSOperator.EQUAL, id));
+			}
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+				| SecurityException e) {
+			e.printStackTrace();
+		}
+		if (id != null) {
+			threadPoolExecutor.execute(new Runnable() {
+				@Override
+				public void run() {
+
+					String key = getRedisKey(item.getClass());
+					Map<Integer, ?> map = objectCacheService.indexListObjectItem(key, item.getClass(), ocsConditions);
+					if (map != null && !map.isEmpty()) {
+						Integer keyInteger = null;
+						for (Map.Entry<Integer, ?> entry : map.entrySet()) {
+							// 按照类型和id 获取的结果只会有一个
+							keyInteger = (Integer) entry.getKey();
+							break;
+						}
+
+						for (int j = 0; !objectCacheService.removeListObjectItem(key, keyInteger)
+								&& j < REPETITION_TIME; j++)
+							;
+					}
+				}
+			});
+		} else {
+			threadPoolExecutor.execute(new Runnable() {
+
+				@Override
+				public void run() {
+					for (int j = 0; !objectCacheService.deleteListObject(getRedisKey(item.getClass()))
+							&& j < REPETITION_TIME; j++)
+						;
+				}
+			});
+		}
+
+	}
+
+	/**
+	 * 生成该对象的rediskey
+	 * @Title: getRedisKey
+	 * @param item
+	 * @return String
+	 * @see 
+	 * @throws
+	 * @author Administrator
+	 */
+	private <T> String getRedisKey(Class<T> item) {
+		StringBuilder sb = new StringBuilder(redisKeyPrefix);
+		sb.append(item.getName().toUpperCase());
+		return sb.toString();
+	}
+
+}

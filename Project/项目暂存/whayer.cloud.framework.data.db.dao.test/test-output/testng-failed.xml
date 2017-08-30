@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite guice-stage="DEVELOPMENT" name="Failed suite [Default suite]">
+  <test name="Default test(failed)">
+    <classes>
+      <class name="whayer.cloud.framework.db.test.HibernateDaoTest">
+        <methods>
+          <include name="testCount"/>
+          <include name="testUpdateWhere"/>
+          <include name="testUpdateOne"/>
+          <include name="testCloseConnection"/>
+          <include name="testSelectOne"/>
+          <include name="testDeleteOne"/>
+          <include name="testInsert"/>
+          <include name="testGroup"/>
+          <include name="testGetDao"/>
+          <include name="testSelectList"/>
+          <include name="testDeleteWhere"/>
+        </methods>
+      </class> <!-- whayer.cloud.framework.db.test.HibernateDaoTest -->
+    </classes>
+  </test> <!-- Default test(failed) -->
+</suite> <!-- Failed suite [Default suite] -->

@@ -1,0 +1,7 @@
+<h2>Groups used for this test run</h2><table border="1">
+<tr> <td align="center"><b>Group name</b></td><td align="center"><b>Methods</b></td></tr><tr><td>add</td><td>DeviceAccessImplTest.savleAlarmMessageLevelMetaTest()[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]<br/></td></tr>
+<tr><td>add1</td><td>DeviceAccessImplTest.savleAlarmMessageLevelMetaListTest()[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]<br/></td></tr>
+<tr><td>query</td><td>DeviceAccessImplTest.searchAlarmInfoListTest()[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]<br/></td></tr>
+<tr><td>singleDelete</td><td>DeviceAccessImplTest.deleteAlarmInfoListTest()[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]<br/></td></tr>
+<tr><td>update</td><td>DeviceAccessImplTest.updateListTest()[pri:0, instance:whayer.cloud.storage.component.device.deviceaccess.impl.DeviceAccessImplTest@7f1a241f]<br/></td></tr>
+</table>

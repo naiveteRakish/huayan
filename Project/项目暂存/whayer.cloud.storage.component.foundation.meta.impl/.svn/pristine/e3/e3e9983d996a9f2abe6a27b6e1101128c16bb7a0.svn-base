@@ -1,0 +1,777 @@
+package com.whayer.cloud.storage.component.foundation.meta.impl;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ThreadPoolExecutor;
+
+import whayer.cloud.framework.data.db.dao.HibernateDao;
+import whayer.cloud.framework.data.db.dao.IDao;
+import whayer.cloud.framework.data.db.dao.criteria.Criteria;
+import whayer.cloud.framework.data.db.dao.criteria.Restrictions;
+import whayer.cloud.framework.data.db.dao.datasource.DataBaseException;
+import whayer.cloud.framework.data.db.dao.datasource.IDbSession;
+import whayer.cloud.framework.data.db.dao.datasource.IDbSessionFactory;
+import whayer.cloud.utility.core.BeanService;
+import whayer.component.core.IService;
+
+import com.whayer.cloud.component.objectcache.IOCSStatusNotifyCallback;
+import com.whayer.cloud.component.objectcache.IObjectCacheService;
+import com.whayer.cloud.component.objectcache.OCSCondition;
+import com.whayer.cloud.component.objectcache.OCSStatus;
+import com.whayer.cloud.storage.business.base.data.QueryCondition;
+import com.whayer.cloud.storage.business.base.data.QueryOperator;
+import com.whayer.cloud.storage.component.foundation.meta.IMetaDataService;
+
+/**
+ * 
+ * 这是一个元数据管理服务(如果多个线程使用单一实例进行调用，是没有问题的，但是如果一个线程调用了stop方法，那么整个服务就会停止，另外的线程也将无法使用该服务。除非再次调用start方法启动本服务)
+ * @ClassName: MetaDataManagerImpl
+ * @author Administrator
+ * @date 2017年8月9日 下午2:31:44
+ * @version v1.0.0
+ *
+ */
+public class MetaDataManagerImpl implements IMetaDataService, IService {
+
+	// session工厂
+	private IDbSessionFactory factory;
+	// 获取bean实例的接口
+	private BeanService beanService;
+	// redis服务接口
+	private IObjectCacheService iobjectCacheService;
+	// 同步redis的线程池
+	private ThreadPoolExecutor threadPoolExecutor;
+	// redis重试次数 默认10
+	private Integer REPETITION_TIME = 10;
+	// 该服务接口可接收的对象类型
+	private List<String> typeList;
+	// redis默认连接失败
+	private volatile boolean redisStatus = false;
+	// redis订阅id
+	private String subscribeId;
+	// 线程池核心线程数
+	private int corePoolSize;
+
+	/**
+	 * @return the rEPETITION_TIME
+	 */
+	public Integer getREPETITION_TIME() {
+		return REPETITION_TIME;
+	}
+
+	/**
+	 * @param rEPETITION_TIME the rEPETITION_TIME to set
+	 */
+	public void setREPETITION_TIME(Integer rEPETITION_TIME) {
+		REPETITION_TIME = rEPETITION_TIME;
+	}
+
+	/**
+	 * @return the redisStatus
+	 */
+	public boolean isRedisStatus() {
+		return redisStatus;
+	}
+
+	/**
+	 * @param redisStatus the redisStatus to set
+	 */
+	public void setRedisStatus(boolean redisStatus) {
+		this.redisStatus = redisStatus;
+	}
+
+	/**
+	 * @return the typeList
+	 */
+	public List<String> getTypeList() {
+		return typeList;
+	}
+
+	/**
+	 * @param typeList the typeList to set
+	 */
+	public void setTypeList(List<String> typeList) {
+		this.typeList = typeList;
+	}
+
+	/**
+	 * @return the rEPETITIONTIME
+	 */
+	public Integer getREPETITIONTIME() {
+		return REPETITION_TIME;
+	}
+
+	/**
+	 * @param rEPETITIONTIME the rEPETITIONTIME to set
+	 */
+	public void setREPETITIONTIME(Integer rEPETITIONTIME) {
+		REPETITION_TIME = rEPETITIONTIME;
+	}
+
+	/**
+	 * @return the factory
+	 */
+	public IDbSessionFactory getFactory() {
+		return factory;
+	}
+
+	/**
+	 * @param factory the factory to set
+	 */
+	public void setFactory(IDbSessionFactory factory) {
+		this.factory = factory;
+	}
+
+	/**
+	 * @return the beanService
+	 */
+	public BeanService getBeanService() {
+		return beanService;
+	}
+
+	/**
+	 * @param beanService the beanService to set
+	 */
+	public void setBeanService(BeanService beanService) {
+		this.beanService = beanService;
+	}
+
+	/**
+	 * @return the iobjectCacheService
+	 */
+	public IObjectCacheService getIobjectCacheService() {
+		return iobjectCacheService;
+	}
+
+	/**
+	 * @param iobjectCacheService the iobjectCacheService to set
+	 */
+	public void setIobjectCacheService(IObjectCacheService iobjectCacheService) {
+
+		this.iobjectCacheService = iobjectCacheService;
+	}
+
+	/**
+	 * @return the executorService
+	 */
+	public ThreadPoolExecutor getExecutorService() {
+		return threadPoolExecutor;
+	}
+
+	/**
+	 * @param executorService the executorService to set
+	 */
+	public void setExecutorService(ThreadPoolExecutor executorService) {
+		this.threadPoolExecutor = executorService;
+	}
+
+	/**
+	 * redis同步处理器
+	 * 这里用一句话描述这个方法的作用
+	 * @Title: executeCache
+	 * @param runnable void
+	 * @see 
+	 * @throws
+	 * @author Administrator
+	 */
+	private void executeCache(Runnable runnable) {
+		if (redisStatus) {
+			// redis 在线
+			threadPoolExecutor.execute(runnable);
+		} else {
+			// redis 不在线
+		}
+	}
+
+	/**
+	 * 将数据库所有元数据表缓存到redis中待用
+	 * @throws ClassNotFoundException 
+	 * @Title: initList void
+	 * @see 
+	 * @throws
+	 * @author Administrator
+	 */
+	private void initListObject() {
+		try {
+			for (String type : typeList) {
+				iobjectCacheService.saveListObject(getRedisKey(Class.forName(type)),
+						this.getMetaData(Class.forName(type), (ArrayList<QueryCondition>) null));
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 生成该对象的rediskey
+	 * @Title: getRedisKey
+	 * @param item
+	 * @return String
+	 * @see 
+	 * @throws
+	 * @author Administrator
+	 */
+	private <T> String getRedisKey(T item) {
+		StringBuilder sb = new StringBuilder(
+				"COM.WHAYER.CLOUD.STORAGE.COMPONENT.FOUNDATION.META.IMPL.METADATAMANAGERIMPL");
+		sb.append(item.getClass().getName().toUpperCase());
+		return sb.toString();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> boolean addMetaData(final T item) {
+		IDbSession session = null;
+		boolean result = true;
+		if (item == null) {
+			return false;
+		}
+		// 校验类型
+		if (checkType(item.getClass())) {
+			return false;
+		}
+
+		try {
+			session = factory.getSession();
+			IDao dao = beanService.getBean(HibernateDao.class);
+			session.beginTransaction();
+			dao.setSession(session);
+			dao.insert(item);
+			session.commit();
+		} catch (DataBaseException e) {
+			result = false;
+			e.printStackTrace();
+			try {
+				if (session != null) {
+					session.rollback();
+				}
+			} catch (DataBaseException dataBaseException) {
+
+				dataBaseException.printStackTrace();
+			}
+		}
+		if (result) {
+			// 操作redis
+			executeCache(new Runnable() {
+
+				@Override
+				public void run() {
+					for (int j = 0; !iobjectCacheService.addListObjectItem(getRedisKey(item), item)
+							&& j != REPETITION_TIME; j++)
+						;
+				}
+			});
+
+		}
+
+		return result;
+	}
+
+	@SuppressWarnings("unused")
+	@Override
+	public <T> boolean addMetaDatas(final List<T> items) {
+
+		IDbSession session = null;
+		boolean result = true;
+
+		if (items == null || items.size() == 0) {
+			return false;
+		}
+
+		for (int i = 0; i < items.size(); i++) {
+			// 校验类型
+			if (checkType(items.get(i).getClass())) {
+				return false;
+			}
+			// 因为这里说校验第一个就可以了所以跳出 ， 如果后面需要校验所有元素 注释break 就ok
+			break;
+		}
+
+		try {
+			session = factory.getSession();
+			IDao dao = beanService.getBean(HibernateDao.class);
+			dao.setSession(session);
+			session.beginTransaction();
+			dao.insert(items.toArray());
+			session.commit();
+		} catch (DataBaseException e) {
+			result = false;
+			e.printStackTrace();
+			try {
+				if (session != null) {
+					session.rollback();
+				}
+			} catch (DataBaseException dataBaseException) {
+
+				dataBaseException.printStackTrace();
+			}
+		}
+		if (result) {
+			// 操作redis
+			executeCache(new Runnable() {
+
+				@Override
+				public void run() {
+					LinkedList<T> linkedList = new LinkedList<T>();
+					for (int i = 0; i < items.size(); i++) {
+						if (!iobjectCacheService.addListObjectItem(getRedisKey(items.get(i)), items.get(i))) {
+							// 添加失败的，存入失败列表。
+							linkedList.add(items.get(i));
+						}
+					}
+					int maxTime = linkedList.size() * REPETITION_TIME;
+					while (linkedList.size() > 0) {
+						int i = 0;
+						for (int j = 0; j < linkedList.size(); j++) {
+							if (iobjectCacheService
+									.addListObjectItem(getRedisKey(linkedList.get(j)), linkedList.get(j))) {
+								// 重试成功，从失败列表移除
+								linkedList.remove(j);
+								j--;
+							}
+						}
+						i++;
+						if (maxTime < i) {
+							// 每条数据重试大概超过10次 则放弃继续执行
+							break;
+						}
+					}
+				}
+			});
+		}
+
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> boolean modifyMetaData(final T item) {
+		IDbSession session = null;
+		boolean result = true;
+
+		if (item == null) {
+			return false;
+		}
+		// 校验类型
+		if (checkType(item.getClass())) {
+			return false;
+		}
+
+		try {
+			session = factory.getSession();
+			session.clear();
+			session.beginTransaction();
+			IDao dao = beanService.getBean(HibernateDao.class);
+			dao.setSession(session);
+			dao.update(item);
+			session.commit();
+		} catch (DataBaseException e) {
+			result = false;
+			e.printStackTrace();
+			try {
+				if (session != null) {
+					session.rollback();
+				}
+			} catch (DataBaseException dataBaseException) {
+
+				dataBaseException.printStackTrace();
+			}
+		}
+		if (result) {
+			// 操作redis
+			executeCache(new Runnable() {
+				@Override
+				public void run() {
+					List<OCSCondition> ocsConditions = new ArrayList<OCSCondition>();
+					try {
+						// 因为传入类型为泛型 并且没有基类 只能制定每个元数据对象 id 都是 "id" 名字
+						ocsConditions.add(new OCSCondition("id", OCSCondition.OCSOperator.EQUAL, item.getClass()
+								.getDeclaredField("id").get(item).toString()));
+					} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException
+							| SecurityException e) {
+						e.printStackTrace();
+					}
+
+					Map<Integer, ?> map = iobjectCacheService.indexListObjectItem(getRedisKey(item), item.getClass(),
+							ocsConditions);
+					Integer keyInteger = null;
+					for (Map.Entry<Integer, ?> entry : map.entrySet()) {
+						// 按照类型和id 获取的结果只会有一个
+						keyInteger = (Integer) entry.getKey();
+						break;
+					}
+					for (int j = 0; !iobjectCacheService.replaceListObjectItem(getRedisKey(item), keyInteger, item)
+							&& j != REPETITION_TIME; j++)
+						;
+				}
+			});
+		}
+
+		return result;
+	}
+
+	@Override
+	public <T> boolean deleteMetaData(final Class<T> type, final String id) {
+
+		if (type == null || id == null || "".equals(id.trim())) {
+			return false;
+		}
+
+		// 校验类型
+		if (checkType(type)) {
+			return false;
+		}
+
+		IDbSession session = null;
+		boolean result = true;
+		try {
+			// dao操作
+			session = factory.getSession();
+			session.clear();
+			session.beginTransaction();
+			IDao dao = beanService.getBean(HibernateDao.class);
+			dao.setSession(session);
+			dao.delete(type, id);
+			session.commit();
+		} catch (DataBaseException e) {
+			result = false;
+			e.printStackTrace();
+			try {
+				if (session != null) {
+					session.rollback();
+				}
+			} catch (DataBaseException dataBaseException) {
+
+				dataBaseException.printStackTrace();
+			}
+		}
+		if (result) {
+			// 操作redis
+			executeCache(new Runnable() {
+				@Override
+				public void run() {
+					List<OCSCondition> ocsConditions = new ArrayList<OCSCondition>();
+					try {
+						// 因为传入类型为泛型 并且没有基类 只能制定每个元数据对象 id 都是 "id" 名字
+						ocsConditions.add(new OCSCondition("id", OCSCondition.OCSOperator.EQUAL, type.getClass()
+								.getDeclaredField("id").get(type).toString()));
+					} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException
+							| SecurityException e) {
+						e.printStackTrace();
+					}
+					Map<Integer, ?> map = iobjectCacheService.indexListObjectItem(getRedisKey(type), type.getClass(),
+							ocsConditions);
+					Integer keyInteger = null;
+					for (Map.Entry<Integer, ?> entry : map.entrySet()) {
+						// 按照类型和id 获取的结果只会有一个
+						keyInteger = (Integer) entry.getKey();
+						break;
+					}
+
+					for (int j = 0; !iobjectCacheService.removeListObjectItem(getRedisKey(type), keyInteger)
+							&& j != REPETITION_TIME; j++)
+						;
+				}
+			});
+		}
+
+		return result;
+	}
+
+	@Override
+	public <T> boolean deleteMetaData(final Class<T> type) {
+		if (type == null) {
+			return false;
+		}
+		// 校验类型
+		if (checkType(type)) {
+			return false;
+		}
+
+		IDbSession session = null;
+		boolean result = true;
+		try {
+			session = factory.getSession();
+			session.clear();
+			session.beginTransaction();
+			IDao dao = beanService.getBean(HibernateDao.class);
+			dao.setSession(session);
+			dao.delete(type, (Criteria) null);
+			session.commit();
+		} catch (DataBaseException e) {
+			result = false;
+			e.printStackTrace();
+			try {
+				if (session != null) {
+					session.rollback();
+				}
+			} catch (DataBaseException dataBaseException) {
+
+				dataBaseException.printStackTrace();
+			}
+		}
+		if (result) {
+			// 操作redis
+			executeCache(new Runnable() {
+
+				@Override
+				public void run() {
+					for (int j = 0; !iobjectCacheService.deleteListObject(getRedisKey(type)) && j != REPETITION_TIME; j++)
+						;
+				}
+			});
+		}
+		return result;
+	}
+
+	@Override
+	public <T> T getMetaData(Class<T> type, String id) {
+		IDbSession session = null;
+		T result = null;
+		// 数据是否来自数据库
+		boolean isDataBase = false;
+		if (type == null || id == null || "".equals(id.trim())) {
+			return result;
+		}
+		// 校验类型
+		if (checkType(type)) {
+			return result;
+		}
+
+		// 查询缓存
+		if (redisStatus) {
+
+			List<OCSCondition> ocsConditions = new ArrayList<OCSCondition>();
+			ocsConditions.add(new OCSCondition("id", OCSCondition.OCSOperator.EQUAL, id));
+			Map<Integer, T> map = iobjectCacheService.indexListObjectItem(getRedisKey(type), type, ocsConditions);
+
+			for (Map.Entry<Integer, T> entry : map.entrySet()) {
+				// 按照类型和id查询 结果只会有一条
+				result = entry.getValue();
+				break;
+			}
+		}
+
+		if (result == null) {
+			try {
+				session = factory.getSession();
+				IDao dao = beanService.getBean(HibernateDao.class);
+				dao.setSession(session);
+				result = dao.selectOne(type, id);
+				isDataBase = true;
+			} catch (DataBaseException e) {
+				e.printStackTrace();
+				try {
+					if (session != null) {
+						session.rollback();
+					}
+				} catch (DataBaseException dataBaseException) {
+
+					dataBaseException.printStackTrace();
+				}
+			}
+			if (result != null && isDataBase) {
+				// 操作redis
+				final T var = result;
+				executeCache(new Runnable() {
+
+					@Override
+					public void run() {
+						for (int j = 0; !iobjectCacheService.addListObjectItem(getRedisKey(var), var)
+								&& j != REPETITION_TIME; j++)
+							;
+					}
+				});
+			}
+		}
+
+		return result;
+	}
+
+	@Override
+	public <T> List<T> getMetaData(Class<T> type, List<QueryCondition> condition) {
+		IDbSession session = null;
+		List<T> result = null;
+		// 数据是否来自数据库
+		boolean isDataBase = false;
+		if (type == null) {
+			return result;
+		}
+		if (checkType(type)) {
+			return result;
+		}
+
+		Criteria where = null;
+		List<OCSCondition> ocsConditions = null;
+		if (condition != null && condition.size() > 0) {
+			ocsConditions = new ArrayList<OCSCondition>();
+			// queryCondition中任一属性为null，则丢弃该项匹配条件
+			for (QueryCondition c : condition) {
+				if (c != null && c.getKey() != null && !c.getKey().equals("") && c.getQueryOperator() != null
+						&& c.getValue() != null) {
+					if (where == null) {
+						where = new Criteria();
+					}
+					if (c.getQueryOperator().getOperator() == QueryOperator.Operator.EQUAL) {
+						where.add(Restrictions.eq(type, c.getKey(), c.getValue()));
+						ocsConditions.add(new OCSCondition(c.getKey(), OCSCondition.OCSOperator.EQUAL, c.getValue()
+								.toString()));
+					} else if (c.getQueryOperator().getOperator() == QueryOperator.Operator.LIKE) {
+						where.add(Restrictions.like(type, c.getKey(), c.getValue().toString()));
+						ocsConditions.add(new OCSCondition(c.getKey(), OCSCondition.OCSOperator.LIKE, c.getValue()
+								.toString()));
+					} else {
+						// 还没有这个比较条件
+						return result;
+					}
+				}
+			}
+
+		}
+		if (redisStatus && where != null) {
+			// 按条件查询缓存
+			Map<Integer, T> map = iobjectCacheService.indexListObjectItem(getRedisKey(type), type, ocsConditions);
+			result = new ArrayList<T>();
+			for (Map.Entry<Integer, T> entry : map.entrySet()) {
+				// 封装结果
+				result.add(entry.getValue());
+			}
+		} else if (redisStatus) {
+			// 获取整个业务链表对象
+			result = iobjectCacheService.getListObject(getRedisKey(type), type);
+		}
+
+		if (result == null || result.size() == 0) {
+
+			try {
+				session = factory.getSession();
+				IDao dao = beanService.getBean(HibernateDao.class);
+				dao.setSession(session);
+				result = dao.selectList(type, where);
+				isDataBase = true;
+			} catch (DataBaseException e) {
+				e.printStackTrace();
+			}
+			if (result != null && result.size() != 0 && isDataBase) {
+				final List<T> list = result;
+				// 操作redis
+				executeCache(new Runnable() {
+
+					@Override
+					public void run() {
+						LinkedList<T> linkedList = new LinkedList<T>();
+						for (int i = 0; i < list.size(); i++) {
+							if (!iobjectCacheService.addListObjectItem(getRedisKey(list.get(i)), list.get(i))) {
+								// 添加失败的，存入失败列表。
+								linkedList.add(list.get(i));
+							}
+						}
+						int maxTime = linkedList.size() * REPETITION_TIME;
+						while (linkedList.size() > 0) {
+							int i = 0;
+							for (int j = 0; j < linkedList.size(); j++) {
+								if (iobjectCacheService.addListObjectItem(getRedisKey(linkedList.get(j)),
+										linkedList.get(j))) {
+									// 重试成功，从失败列表移除
+									linkedList.remove(j);
+									j--;
+								}
+							}
+							i++;
+							if (maxTime < i) {
+								// 每条数据重试大概超过10次 则放弃继续执行
+								break;
+							}
+						}
+					}
+				});
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * 检查类型是否合法
+	 * @Title: checkType
+	 * @param type
+	 * @return boolean 返回true 表示非法， false表示合法
+	 * @see 
+	 * @throws
+	 * @author Administrator
+	 */
+	private <T> boolean checkType(Class<T> type) {
+		boolean boo = true;
+		for (String typeItem : typeList) {
+			if ((type.getName().equals(typeItem))) {
+				boo = false;
+				break;
+			}
+		}
+		return boo;
+	}
+
+	/**
+	 * 服务启动
+	 */
+	@Override
+	public void start() {
+		synchronized (this) {
+			// 线程池初始化
+			synchronized (MetaDataManagerImpl.class) {
+				if (threadPoolExecutor.getCorePoolSize() != 0) {
+					corePoolSize = threadPoolExecutor.getCorePoolSize();
+				} else {
+					threadPoolExecutor.setCorePoolSize(corePoolSize);
+				}
+			}
+
+			initListObject();
+			redisStatus = true;
+
+			// 订阅redis通知
+			subscribeId = this.iobjectCacheService.subscribeStatus(new IOCSStatusNotifyCallback() {
+
+				@Override
+				public void notifyStatus(OCSStatus status) {
+					if (OCSStatus.OFF_LINE == status) {
+						// 下线 清空任务队列
+						redisStatus = false;
+						threadPoolExecutor.getQueue().clear();
+					} else {
+						// 上线
+						initListObject();
+						redisStatus = true;
+
+					}
+
+				}
+			});
+		}
+	}
+
+	/**
+	 * 服务关闭
+	 */
+	@Override
+	public void stop() {
+		synchronized (this) {
+			redisStatus = false;
+			threadPoolExecutor.getQueue().clear();
+
+			// 减少多余线程回收资源
+			threadPoolExecutor.setCorePoolSize(0);
+
+			// 清空redis缓存
+			for (String string : typeList) {
+				for (int j = 0; !iobjectCacheService.deleteListObject(getRedisKey(string)) && j != REPETITION_TIME; j++)
+					;
+			}
+			// 取消订阅
+			for (int j = 0; !this.iobjectCacheService.unsubscribeStatus(subscribeId) && j != REPETITION_TIME; j++)
+				;
+		}
+	}
+}

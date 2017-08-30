@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="whayer.cloud">
+    <resultMap type="whayer.cloud.dbSystemInfoDao.DbSystemInfo" id="DbSystemInfoResultMap">
+		<id property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="version" column="version" />
+	</resultMap>
+	
+	<resultMap type="whayer.cloud.dbSystemInfoDao.DbSystemInfoGroupByName" id="DbSystemInfoGroupByNameResultMap">
+		<result property="name" column="name" />
+		<result property="version" column="version" />
+	</resultMap>
+
+	<insert id="insertDbSystemInfo" parameterType="map">
+		INSERT INTO dbsysteminfo(id, name, version) VALUES	(#{id},	#{name}, #{version});
+	</insert>
+	
+	<update id="updateDbSystemInfo" parameterType="map">
+		UPDATE dbsysteminfo set name=#{name}, version=#{version} where id = #{id};
+	</update>
+	
+	<update id="updateWhereDbSystemInfo" parameterType="map">
+		update dbsysteminfo set ${fieldsAndValuesSql} where ${whereSQL} 
+	</update>
+	
+	<delete id="deleteDbSystemInfo" parameterType="long">
+		DELETE FROM	dbsysteminfo WHERE id = #{id}
+	</delete>
+	
+	<delete id="deleteWhereDbSystemInfo" parameterType="map">
+		DELETE FROM	dbsysteminfo WHERE ${whereSQL}
+	</delete>
+
+	<select id="selectOneDbSystemInfo" parameterType="long" resultMap="DbSystemInfoResultMap">
+		SELECT * FROM dbsysteminfo where id=#{id}
+	</select>
+	
+	<select id="selectListDbSystemInfo" resultMap="DbSystemInfoResultMap">
+		SELECT * FROM dbsysteminfo where ${whereSQL}
+		<if test="FirstResult!=null and FirstResult>=0 and MaxResults!=null and MaxResults>0">
+			limit #{FirstResult}, #{MaxResults}
+		</if>
+	</select>
+
+	<select id="countDbSystemInfo" resultType="long" >
+    	select count(*) from dbsysteminfo where ${whereSQL}
+  	</select>  
+  	
+  	<select id="groupDbSystemInfo" parameterType="map" resultType="map">
+    	select ${groupFields} from dbsysteminfo group by ${groupByFields}
+    	<if test="havingSql!=null and havingSql!=''">
+    		having ${havingSql}
+    	</if>
+  	</select>  
+  	
+</mapper>
