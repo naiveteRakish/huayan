@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- ~ Copyright 2009-2016 Weibo, Inc. ~ ~ Licensed under the Apache License, 
+	Version 2.0 (the "License"); ~ you may not use this file except in compliance 
+	with the License. ~ You may obtain a copy of the License at ~ ~ http://www.apache.org/licenses/LICENSE-2.0 
+	~ ~ Unless required by applicable law or agreed to in writing, software ~ 
+	distributed under the License is distributed on an "AS IS" BASIS, ~ WITHOUT 
+	WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. ~ See the 
+	License for the specific language governing permissions and ~ limitations 
+	under the License. -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:motan="http://api.weibo.com/schema/motan"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://api.weibo.com/schema/motan http://api.weibo.com/schema/motan.xsd">
+
+	<import resource="springbeans-access.xml" />
+	<import resource="springbeans-hibernate.xml" />
+	<import resource="springbeans-metaTypeManage.xml" />
+	<import resource="springbeans-resource.xml" />
+
+	<motan:protocol id="motan-protocol" default="true" name="motan"
+		serialization="fastjson" maxServerConnection="80000" maxContentLength="1048576"
+		maxWorkerThread="800" minWorkerThread="20" />
+
+	<!-- basicService="serviceBasicConfig" -->
+	<motan:basicService id="serviceBasicConfig" group="motan-demo-provider"
+		accessLog="false" shareChannel="true" module="motan-demo-provider"
+		application="motan-demo-provider" />
+
+	<!-- exporting service by motan -->
+	<motan:service
+		interface="com.whayer.cloud.storage.component.foundation.res.IResourceService"
+		ref="resourceService" export="motan-protocol:8002" basicService="serviceBasicConfig" />
+</beans>

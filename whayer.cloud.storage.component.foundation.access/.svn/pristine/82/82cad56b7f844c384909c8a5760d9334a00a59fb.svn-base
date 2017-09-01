@@ -1,0 +1,21 @@
+package com.whayer.cloud.storage.component.foundation.access;
+
+import java.util.List;
+
+import com.whayer.cloud.storage.business.base.data.QueryCondition;
+
+public interface IAccessService {
+	<T> boolean add(T t);
+
+	<T> boolean addAll(List<T> ts);
+
+	<T> boolean update(T t);
+
+	<T> boolean updateAll(List<T> t);
+
+	<T> boolean delete(List<QueryCondition> condition);
+
+	int count(List<QueryCondition> condition);
+
+	<T> List<T> query(int start, int end, List<QueryCondition> condition);
+}

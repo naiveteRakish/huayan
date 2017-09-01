@@ -1,0 +1,75 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd">
+  
+  	<!--redis缓存对象  -->
+	<bean id="objectCacheService" class="com.whayer.cloud.component.objectcache.impl.ObjectCacheService"></bean>
+	<!--失败任务 定时重试器 默认0延迟，循环间隔12小时   可配置: 定时器延时时间， 定时器时间单位， 定时器循环执行间隔,失败元素队列类型,任务调度线程池。
+	要使用该对象必须配置这三个属性 -->
+	<bean id="metaTimingCacheService" class="com.whayer.cloud.storage.component.foundation.meta.impl.MetaTimingCacheServiceImpl" init-method="init">
+		<property name="metaCacheService" ref="metaCacheService"></property>
+		<property name="factory" ref="hibernateSessionFacotry" />
+		<property name="beanService" ref="beanService" />
+	</bean>
+	<!--线程池线程存活时间单位：分钟    -->
+	<bean id="minutes" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">    
+	        <property name="staticField" value="java.util.concurrent.TimeUnit.MINUTES" />    
+	</bean>
+	<!-- 同步器线程池 任务队列定义：无界队列 -->
+	 <bean id="synchronousQueue" class="java.util.concurrent.SynchronousQueue">
+	</bean>
+	<!-- 同步器线程池 任务队列定义：有界队列 -->
+	<bean id="linkedBlockingQueue" class="java.util.concurrent.LinkedBlockingQueue" />
+	
+	<!-- cache可缓冲线程池 (任务队列最大值为int最大值，线程池最大线程也为int最大值) -->
+	<bean id="synThreadPool" class="com.whayer.cloud.storage.component.foundation.meta.impl.RedisThreadPoolExecutor">
+		 <constructor-arg index="0"  value="0"/>
+      	 <constructor-arg index="1"  value="0x7fffffff"/>
+      	 <constructor-arg index="2"  value="5"/>
+      	 <constructor-arg index="3"  ref="minutes"/>
+      	 <constructor-arg index="4"  ref="synchronousQueue" />
+	</bean>
+	<!-- cache有界线程池 (任务队列最大值为int最大值，线程池最大线程也为int最大值) -->
+	<bean id="linThreadPool" class="com.whayer.cloud.storage.component.foundation.meta.impl.RedisThreadPoolExecutor">
+		 <constructor-arg index="0"  value="1"/>
+      	 <constructor-arg index="1"  value="1"/>
+      	 <constructor-arg index="2"  value="1"/>
+      	 <constructor-arg index="3"  ref="minutes"/>
+      	 <constructor-arg index="4"  ref="linkedBlockingQueue" />
+      	<!--有界队列 尽量配置一个任务队列溢出的策略 ， 默认是抛出RejectedExecutionException异常  <constructor-arg index="5"  ref="" /> -->
+	</bean> 
+	<!--缓存同步接口  -->	
+	<bean id="metaCacheService" class="com.whayer.cloud.storage.component.foundation.meta.impl.MetaCacheServiceImpl" init-method="checkBean">
+		<property name="objectCacheService" ref="objectCacheService"></property>
+		<!--缓存调度器使用的线程池 必须和元数据管理配置的是同一个对象  -->
+		<property name="threadPoolExecutor" ref="synThreadPool"></property>
+		<property name="metaTimingCacheService" ref="metaTimingCacheService"></property>
+	</bean>	
+	<!--元数据管理配置 调用start 则开启redis缓存功能 请先保证redis已经能正常运行 -->
+	<bean id="metaDataService" class="com.whayer.cloud.storage.component.foundation.meta.impl.MetaDataServiceImpl" init-method="start">
+		<property name="factory" ref="hibernateSessionFacotry" />
+		<property name="beanService" ref="beanService" />
+		<!--缓存调度器使用的线程池  必须和缓存同步器配置的是同一个对象-->
+		<property name="threadPoolExecutor" ref="synThreadPool" />
+		<!--缓存调度器  -->
+		<property name="iMetaCacheService" ref="metaCacheService" />
+		<!--redis缓存服务对象  -->
+		<property name="objectCacheService" ref="objectCacheService" />
+		<!--同步失败任务，定时重试调度器 （定时重试缓存调度器执行失败的任务） -->
+		<property name="metaTimingCacheService" ref="metaTimingCacheService"/>
+		<!--允许该管理器可管理的对象（只有将对象添加进入list，该管理器才能对其进行操作）  -->
+		<property name="typeList">
+            <list>
+                <value>com.whayer.cloud.storage.business.alarm.data.AlarmMessageLevelMeta</value>
+                <value>com.whayer.cloud.storage.business.alarm.data.AlarmMessageTypeMeta</value>
+                <value>com.whayer.cloud.storage.business.base.data.msg.MessageSourceIficationTypeMeta</value>
+                <value>com.whayer.cloud.storage.business.base.data.msg.MessageSourceTypeMeta</value>
+                <value>com.whayer.cloud.storage.business.base.data.res.ProtocolTypeMeta</value>
+                <value>com.whayer.cloud.storage.business.base.data.res.AreaTypeMeta</value>
+                <value>com.whayer.cloud.storage.business.device.data.DeviceTypeMeta</value>
+                <value>com.whayer.cloud.storage.business.base.data.res.ResourceTypeMeta</value>
+            </list>
+        </property>
+	</bean>
+</beans>

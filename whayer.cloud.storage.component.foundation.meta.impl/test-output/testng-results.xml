@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="5" passed="5">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Default suite" duration-ms="13650" started-at="2017-08-31T02:01:42Z" finished-at="2017-08-31T02:01:55Z">
+    <groups>
+      <group name="update">
+        <method signature="WhayerMetaDataManagerImplTest.updateListTest()[pri:0, instance:com.whayer.cloud.storage.component.foundation.meta.impl.WhayerMetaDataManagerImplTest@4de3a6dd]" name="updateListTest" class="com.whayer.cloud.storage.component.foundation.meta.impl.WhayerMetaDataManagerImplTest"/>
+      </group> <!-- update -->
+      <group name="query">
+        <method signature="WhayerMetaDataManagerImplTest.searchAlarmInfoListTest()[pri:0, instance:com.whayer.cloud.storage.component.foundation.meta.impl.WhayerMetaDataManagerImplTest@4de3a6dd]" name="searchAlarmInfoListTest" class="com.whayer.cloud.storage.component.foundation.meta.impl.WhayerMetaDataManagerImplTest"/>
+      </group> <!-- query -->
+      <group name="add">
+        <method signature="WhayerMetaDataManagerImplTest.savleAlarmMessageLevelMetaListTest()[pri:0, instance:com.whayer.cloud.storage.component.foundation.meta.impl.WhayerMetaDataManagerImplTest@4de3a6dd]" name="savleAlarmMessageLevelMetaListTest" class="com.whayer.cloud.storage.component.foundation.meta.impl.WhayerMetaDataManagerImplTest"/>
+        <method signature="WhayerMetaDataManagerImplTest.savleAlarmMessageLevelMetaTest()[pri:0, instance:com.whayer.cloud.storage.component.foundation.meta.impl.WhayerMetaDataManagerImplTest@4de3a6dd]" name="savleAlarmMessageLevelMetaTest" class="com.whayer.cloud.storage.component.foundation.meta.impl.WhayerMetaDataManagerImplTest"/>
+      </group> <!-- add -->
+      <group name="singleDelete">
+        <method signature="WhayerMetaDataManagerImplTest.deleteAlarmInfoListTest()[pri:0, instance:com.whayer.cloud.storage.component.foundation.meta.impl.WhayerMetaDataManagerImplTest@4de3a6dd]" name="deleteAlarmInfoListTest" class="com.whayer.cloud.storage.component.foundation.meta.impl.WhayerMetaDataManagerImplTest"/>
+      </group> <!-- singleDelete -->
+    </groups>
+    <test name="Default test" duration-ms="13650" started-at="2017-08-31T02:01:42Z" finished-at="2017-08-31T02:01:55Z">
+      <class name="com.whayer.cloud.storage.component.foundation.meta.impl.WhayerMetaDataManagerImplTest">
+        <test-method status="PASS" signature="beforeTest()[pri:0, instance:com.whayer.cloud.storage.component.foundation.meta.impl.WhayerMetaDataManagerImplTest@4de3a6dd]" name="beforeTest" is-config="true" duration-ms="840" started-at="2017-08-31T10:01:42Z" finished-at="2017-08-31T10:01:42Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- beforeTest -->
+        <test-method status="PASS" signature="savleAlarmMessageLevelMetaListTest()[pri:0, instance:com.whayer.cloud.storage.component.foundation.meta.impl.WhayerMetaDataManagerImplTest@4de3a6dd]" name="savleAlarmMessageLevelMetaListTest" duration-ms="2295" started-at="2017-08-31T10:01:42Z" finished-at="2017-08-31T10:01:45Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- savleAlarmMessageLevelMetaListTest -->
+        <test-method status="PASS" signature="savleAlarmMessageLevelMetaTest()[pri:0, instance:com.whayer.cloud.storage.component.foundation.meta.impl.WhayerMetaDataManagerImplTest@4de3a6dd]" name="savleAlarmMessageLevelMetaTest" duration-ms="16" started-at="2017-08-31T10:01:45Z" finished-at="2017-08-31T10:01:45Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- savleAlarmMessageLevelMetaTest -->
+        <test-method status="PASS" signature="updateListTest()[pri:0, instance:com.whayer.cloud.storage.component.foundation.meta.impl.WhayerMetaDataManagerImplTest@4de3a6dd]" name="updateListTest" duration-ms="5240" depends-on-groups="add" started-at="2017-08-31T10:01:45Z" finished-at="2017-08-31T10:01:50Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- updateListTest -->
+        <test-method status="PASS" signature="deleteAlarmInfoListTest()[pri:0, instance:com.whayer.cloud.storage.component.foundation.meta.impl.WhayerMetaDataManagerImplTest@4de3a6dd]" name="deleteAlarmInfoListTest" duration-ms="5124" depends-on-groups="update" started-at="2017-08-31T10:01:50Z" finished-at="2017-08-31T10:01:55Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- deleteAlarmInfoListTest -->
+        <test-method status="PASS" signature="searchAlarmInfoListTest()[pri:0, instance:com.whayer.cloud.storage.component.foundation.meta.impl.WhayerMetaDataManagerImplTest@4de3a6dd]" name="searchAlarmInfoListTest" duration-ms="107" depends-on-groups="update, add" started-at="2017-08-31T10:01:55Z" finished-at="2017-08-31T10:01:55Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- searchAlarmInfoListTest -->
+        <test-method status="PASS" signature="afterTese()[pri:0, instance:com.whayer.cloud.storage.component.foundation.meta.impl.WhayerMetaDataManagerImplTest@4de3a6dd]" name="afterTese" is-config="true" duration-ms="2" started-at="2017-08-31T10:01:55Z" finished-at="2017-08-31T10:01:55Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- afterTese -->
+      </class> <!-- com.whayer.cloud.storage.component.foundation.meta.impl.WhayerMetaDataManagerImplTest -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>

@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="UTF-8"?> 
+<root>
+	<jedis ip="192.168.4.103" port="31101" pwd="123456"/>
+	<redis-lock expire="200" timeout="5000" interval="100"/>
+</root> 
+<!-- <root>
+	<jedis ip="localhost" port="6379" />
+	<redis-lock expire="1" timeout="2000" interval="100"/>
+</root>  -->

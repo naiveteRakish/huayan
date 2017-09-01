@@ -1,0 +1,233 @@
+/**  
+ * 元数据管理测试
+ * @Title: WhayerMetaDataManagerImplTest.java
+ * @Package com.whayer.cloud.storage.component.foundation.meta.impl
+ * @author Administrator
+ * @date 2017年8月2日 下午5:36:21
+ * @version v1.0.0
+ */
+package com.whayer.cloud.storage.component.foundation.meta.impl;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import org.springframework.test.context.ContextConfiguration;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
+import com.whayer.cloud.storage.business.alarm.data.AlarmMessageLevelMeta;
+import com.whayer.cloud.storage.business.alarm.data.AlarmMessageTypeMeta;
+import com.whayer.cloud.storage.business.base.data.msg.MessageSourceIficationTypeMeta;
+import com.whayer.cloud.storage.business.base.data.msg.MessageSourceTypeMeta;
+import com.whayer.cloud.storage.business.base.data.type.Type;
+import com.whayer.cloud.storage.component.foundation.meta.IMetaDataManager;
+
+/**
+ * 元数据管理测试
+ * @ClassName: WhayerMetaDataManagerImplTest
+ * @author Administrator
+ * @date 2017年8月2日 下午5:36:21
+ * @version v1.0.0
+ * 
+ */
+@ContextConfiguration(locations = { "classpath:beans.xml" })
+public class WhayerMetaDataManagerImplTest {
+
+	private IMetaDataManager metaDataManager;
+
+	private List<Type> list;
+
+	@SuppressWarnings("static-access")
+	@BeforeTest
+	public void beforeTest() {
+		// 数据操作组件环境初始化
+		metaDataManager = new MetaDataManagerImpl();
+
+		// 模拟前端系统创建多个对象
+		list = new ArrayList<Type>();
+		UUID uuid = UUID.randomUUID();
+		Type af = null;
+		for (int i = 0; i < 20; i++) {
+			if (i % 2 == 0) {
+				af = new AlarmMessageLevelMeta();
+				af.setId(String.valueOf(uuid.randomUUID()));
+				af.setDesc("描述" + i);
+				af.setCode("类型编码" + i);
+				af.setName("名称" + i);
+			} else if (i % 3 == 0) {
+				af = new AlarmMessageTypeMeta();
+				af.setId(String.valueOf(uuid.randomUUID()));
+				af.setDesc("描述" + i);
+				af.setCode("类型编码" + i);
+				af.setName("名称" + i);
+			} else if (i % 4 == 0) {
+				af = new MessageSourceIficationTypeMeta();
+				af.setId(String.valueOf(uuid.randomUUID()));
+				af.setDesc("描述" + i);
+				af.setCode("类型编码" + i);
+				af.setName("名称" + i);
+			} else {
+				af = new MessageSourceTypeMeta();
+				af.setId(String.valueOf(uuid.randomUUID()));
+				af.setDesc("描述" + i);
+				af.setCode("类型编码" + i);
+				af.setName("名称" + i);
+			}
+			list.add(af);
+		}
+		System.out.println("prepare to complete, start test......");
+	}
+
+	// 单个保存测试
+	@Test(groups = { "add" })
+	public void savleAlarmMessageLevelMetaTest() {
+		System.out.println("savleAlarmMessageLevelMetaTest......");
+		for (int i = 0; i < list.size(); i++) {
+			metaDataManager.addMetaData(list.get(i));
+			assertNotNull(metaDataManager.getMetaData(list.get(i).getClass(), list.get(i).getId()), "单个保存测试失败!");
+		}
+	}
+
+	// 多个保存测试
+	@Test(groups = { "add" })
+	public void savleAlarmMessageLevelMetaListTest() {
+		metaDataManager.addMetaDatas(list);
+	}
+
+	// 四种类型 单个更新测试
+	@Test(dependsOnGroups = { "add.*" }, groups = { "update" })
+	public void updateListTest() {
+		List<MessageSourceTypeMeta> messageSourceTypeMeta = metaDataManager.getMetaData(MessageSourceTypeMeta.class,
+				new HashMap<String, String>());
+		messageSourceTypeMeta.get(0).setName("更新后的名字");
+		metaDataManager.modifyMetaData(messageSourceTypeMeta);
+		messageSourceTypeMeta = metaDataManager.getMetaData(MessageSourceTypeMeta.class, new HashMap<String, String>());
+		assertEquals(messageSourceTypeMeta.get(0).getName(), "更新后的名字");
+
+		List<MessageSourceIficationTypeMeta> messageSourceIficationTypeMeta = metaDataManager.getMetaData(
+				MessageSourceIficationTypeMeta.class, new HashMap<String, String>());
+		messageSourceIficationTypeMeta.get(0).setName("更新后的名字");
+		metaDataManager.modifyMetaData(messageSourceIficationTypeMeta);
+		messageSourceIficationTypeMeta = metaDataManager.getMetaData(MessageSourceIficationTypeMeta.class,
+				new HashMap<String, String>());
+		assertEquals(messageSourceIficationTypeMeta.get(0).getName(), "更新后的名字");
+
+		List<AlarmMessageTypeMeta> alarmMessageTypeMeta = metaDataManager.getMetaData(AlarmMessageTypeMeta.class,
+				new HashMap<String, String>());
+		alarmMessageTypeMeta.get(0).setName("更新后的名字");
+		metaDataManager.modifyMetaData(alarmMessageTypeMeta);
+		alarmMessageTypeMeta = metaDataManager.getMetaData(AlarmMessageTypeMeta.class, new HashMap<String, String>());
+		assertEquals(alarmMessageTypeMeta.get(0).getName(), "更新后的名字");
+
+		List<AlarmMessageLevelMeta> alarmMessageLevelMeta = metaDataManager.getMetaData(AlarmMessageLevelMeta.class,
+				new HashMap<String, String>());
+		alarmMessageLevelMeta.get(0).setName("更新后的名字");
+		metaDataManager.modifyMetaData(alarmMessageLevelMeta);
+		alarmMessageLevelMeta = metaDataManager.getMetaData(AlarmMessageLevelMeta.class, new HashMap<String, String>());
+		assertEquals(alarmMessageLevelMeta.get(0).getName(), "更新后的名字");
+	}
+
+	// 简单条件查询测试
+	@Test(dependsOnGroups = { "add.*", "update" }, groups = "query")
+	public void searchAlarmInfoListTest() {
+		String nameValueString = "更新后的名字";
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("name", nameValueString);
+		// 创建条件查询对象
+		List<MessageSourceTypeMeta> alist = metaDataManager.getMetaData(MessageSourceTypeMeta.class, map);
+		for (int i = 0; i < alist.size(); i++) {
+			assertEquals(alist.get(i).getName(), nameValueString);
+		}
+
+		List<MessageSourceIficationTypeMeta> messageSourceIficationTypeMetaList = metaDataManager.getMetaData(
+				MessageSourceIficationTypeMeta.class, map);
+		for (int i = 0; i < messageSourceIficationTypeMetaList.size(); i++) {
+			assertEquals(messageSourceIficationTypeMetaList.get(i).getName(), nameValueString);
+		}
+
+		List<AlarmMessageTypeMeta> alarmMessageTypeMetaList = metaDataManager.getMetaData(AlarmMessageTypeMeta.class,
+				map);
+		for (int i = 0; i < alarmMessageTypeMetaList.size(); i++) {
+			assertEquals(alarmMessageTypeMetaList.get(i).getName(), nameValueString);
+		}
+
+		List<AlarmMessageLevelMeta> alarmMessageLevelMetaList = metaDataManager.getMetaData(
+				AlarmMessageLevelMeta.class, map);
+		for (int i = 0; i < alarmMessageLevelMetaList.size(); i++) {
+			assertEquals(alarmMessageLevelMetaList.get(i).getName(), nameValueString);
+		}
+
+	}
+
+	// 按照元数据类型删除测试
+	@Test(dependsOnGroups = { "update.*", "query", "singleDelete" })
+	public void deleteAlarmInfoTest() {
+
+		metaDataManager.deleteMetaData(MessageSourceTypeMeta.class);
+		assertNull(metaDataManager.getMetaData(MessageSourceTypeMeta.class, new HashMap<String, String>()),
+				"按照元数据类型删除测试失败!");
+
+		metaDataManager.deleteMetaData(MessageSourceIficationTypeMeta.class);
+		assertNull(metaDataManager.getMetaData(MessageSourceIficationTypeMeta.class, new HashMap<String, String>()),
+				"按照元数据类型删除测试失败!");
+
+		metaDataManager.deleteMetaData(AlarmMessageTypeMeta.class);
+		assertNull(metaDataManager.getMetaData(AlarmMessageTypeMeta.class, new HashMap<String, String>()),
+				"按照元数据类型删除测试失败!");
+
+		metaDataManager.deleteMetaData(AlarmMessageLevelMeta.class);
+		assertNull(metaDataManager.getMetaData(AlarmMessageLevelMeta.class, new HashMap<String, String>()),
+				"按照元数据类型删除测试失败!");
+
+	}
+
+	// 单个元数据删除测试
+	@Test(dependsOnGroups = { "update.*" }, groups = "singleDelete")
+	public void deleteAlarmInfoListTest() {
+
+		int j = 0;
+		boolean MessageSourceTypeMeta = true;
+		boolean MessageSourceIficationTypeMeta = true;
+		boolean AlarmMessageTypeMeta = true;
+		boolean AlarmMessageLevelMeta = true;
+		for (int i = 0; i < list.size(); i++) {
+			if (list.get(i) instanceof MessageSourceTypeMeta && MessageSourceTypeMeta) {
+				metaDataManager.deleteMetaData(MessageSourceTypeMeta.class, list.get(i).getId());
+				assertNull(metaDataManager.getMetaData(MessageSourceTypeMeta.class, list.get(i).getId()));
+				j++;
+				MessageSourceTypeMeta = false;
+			}
+			if (list.get(i) instanceof MessageSourceIficationTypeMeta && MessageSourceIficationTypeMeta) {
+				metaDataManager.deleteMetaData(MessageSourceIficationTypeMeta.class, list.get(i).getId());
+				assertNull(metaDataManager.getMetaData(MessageSourceIficationTypeMeta.class, list.get(i).getId()));
+				j++;
+				MessageSourceIficationTypeMeta = false;
+			}
+			if (list.get(i) instanceof AlarmMessageTypeMeta && AlarmMessageTypeMeta) {
+				metaDataManager.deleteMetaData(AlarmMessageTypeMeta.class, list.get(i).getId());
+				assertNull(metaDataManager.getMetaData(AlarmMessageTypeMeta.class, list.get(i).getId()));
+				j++;
+				AlarmMessageTypeMeta = false;
+			}
+			if (list.get(i) instanceof AlarmMessageLevelMeta && AlarmMessageLevelMeta) {
+				metaDataManager.deleteMetaData(AlarmMessageLevelMeta.class, list.get(i).getId());
+				assertNull(metaDataManager.getMetaData(AlarmMessageLevelMeta.class, list.get(i).getId()));
+				j++;
+				AlarmMessageLevelMeta = false;
+			}
+			if (j == 4) {
+				break;
+			}
+
+		}
+
+	}
+
+}

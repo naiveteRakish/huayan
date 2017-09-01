@@ -1,0 +1,33 @@
+Manifest-Version: 1.0
+Class-Path: lib/spring-core-4.2.5.RELEASE.jar lib/commons-logging-1.2.
+ jar lib/whayer.cloud.storage.business.base.data-1.0.0.jar lib/whayer.
+ cloud.storage.business.device.data-1.0.0.jar lib/whayer.cloud.compone
+ nt.data.objectcache-1.0.0.jar lib/jodis-0.4.0.jar lib/jedis-2.9.0.jar
+  lib/commons-pool2-2.4.2.jar lib/curator-recipes-2.12.0.jar lib/curat
+ or-framework-2.12.0.jar lib/curator-client-2.12.0.jar lib/zookeeper-3
+ .4.8.jar lib/jline-0.9.94.jar lib/netty-3.7.0.Final.jar lib/jackson-d
+ atabind-2.7.1-1.jar lib/jackson-annotations-2.7.0.jar lib/jackson-cor
+ e-2.7.1.jar lib/whayer.component.core-1.0.0.jar lib/fastjson-1.2.9.ja
+ r lib/guava-16.0.jar lib/org.dom4j-1.6.1.jar lib/jcommander-1.30.jar 
+ lib/whayer.cloud.utility.core-1.0.0.jar lib/log4j-1.2.17.jar lib/slf4
+ j-api-1.7.5.jar lib/slf4j-log4j12-1.7.5.jar lib/spring-aop-4.3.6.RELE
+ ASE.jar lib/spring-orm-4.3.6.RELEASE.jar lib/spring-jdbc-4.3.6.RELEAS
+ E.jar lib/spring-beans-4.3.6.RELEASE.jar lib/spring-context-support-4
+ .3.6.RELEASE.jar lib/spring-expression-4.3.6.RELEASE.jar lib/spring-t
+ x-4.3.6.RELEASE.jar lib/whayer.cloud.framework.data.db.dao-1.0.0.jar 
+ lib/whayer.cloud.framework.data.db.dao.hibernate-1.0.0.jar lib/mysql-
+ connector-java-5.1.40.jar lib/hibernate-commons-annotations-4.0.5.Fin
+ al.jar lib/jboss-logging-annotations-1.2.0.Beta1.jar lib/hibernate-co
+ re-4.3.11.Final.jar lib/hibernate-jpa-2.1-api-1.0.0.Final.jar lib/hib
+ ernate-c3p0-4.3.11.Final.jar lib/c3p0-0.9.2.1.jar lib/c3p0-0.9.2.1.ja
+ r lib/mchange-commons-java-0.2.3.4.jar lib/jboss-logging-3.3.0.Final.
+ jar lib/jboss-transaction-api_1.2_spec-1.0.1.Final.jar lib/dom4j-1.6.
+ 1.jar lib/xml-apis-1.0.b2.jar lib/classmate-1.3.0.jar lib/antlr-2.7.7
+ .jar lib/jandex-2.0.3.Final.jar lib/javassist-3.20.0-GA.jar lib/whaye
+ r.cloud.storage.business.alarm.data-1.0.0.jar lib/whayer.cloud.storag
+ e.component.foundation.meta-1.0.0.jar
+Build-Jdk: 1.7.0_71
+Built-By: Administrator
+Created-By: Maven Integration for Eclipse
+Main-Class: StatisticsRunner
+

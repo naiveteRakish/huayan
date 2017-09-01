@@ -1,0 +1,607 @@
+package com.whayer.cloud.storage.component.foundation.res.impl;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.whayer.cloud.storage.business.base.data.QueryCondition;
+import com.whayer.cloud.storage.business.base.data.QueryOperator;
+import com.whayer.cloud.storage.business.base.data.res.ProtocolTypeMeta;
+import com.whayer.cloud.storage.business.base.data.res.Resource;
+import com.whayer.cloud.storage.business.base.data.res.ResourceTypeMeta;
+import com.whayer.cloud.storage.business.base.data.type.Type;
+import com.whayer.cloud.storage.business.device.data.BaseDeviceInfo;
+import com.whayer.cloud.storage.business.device.data.DvrDeviceInfo;
+import com.whayer.cloud.storage.component.device.deviceaccess.IDeviceAccess;
+import com.whayer.cloud.storage.component.device.deviceaccess.beans.BaseDeviceInfoPojo;
+import com.whayer.cloud.storage.component.device.resourceaccess.IResourceAccess;
+import com.whayer.cloud.storage.component.device.resourceaccess.beans.ResourcePojo;
+import com.whayer.cloud.storage.component.foundation.meta.IMetaDataService;
+import com.whayer.cloud.storage.component.foundation.res.IResourceService;
+
+public class ResourceServiceImpl implements IResourceService {
+
+	private IResourceAccess resourceAccessImpl;
+	private IDeviceAccess deviceAccessImpl;
+	private IMetaDataService metaDataManageService;
+
+	/**
+	 * @return the metaDataManageService
+	 */
+	public IMetaDataService getMetaDataManageService() {
+		return metaDataManageService;
+	}
+
+	/**
+	 * @param metaDataManageService the metaDataManageService to set
+	 */
+	public void setMetaDataManageService(IMetaDataService metaDataManageService) {
+		this.metaDataManageService = metaDataManageService;
+	}
+
+	/**
+	 * @return the resourceAccessImpl
+	 */
+	public IResourceAccess getResourceAccessImpl() {
+		return resourceAccessImpl;
+	}
+
+	/**
+	 * @param resourceAccessImpl the resourceAccessImpl to set
+	 */
+	public void setResourceAccessImpl(IResourceAccess resourceAccessImpl) {
+		this.resourceAccessImpl = resourceAccessImpl;
+	}
+
+	/**
+	 * @return the deviceAccessImpl
+	 */
+	public IDeviceAccess getDeviceAccessImpl() {
+		return deviceAccessImpl;
+	}
+
+	/**
+	 * @param deviceAccessImpl the deviceAccessImpl to set
+	 */
+	public void setDeviceAccessImpl(IDeviceAccess deviceAccessImpl) {
+		this.deviceAccessImpl = deviceAccessImpl;
+	}
+
+	/**
+	 * 添加资源,必须同时将T的className存储到Resouce对象对应的pojo对象的字段中
+	 * （Resource及其子类的pojo对象必须都有一个resouceTypeClassName字段）
+	 * @Title: save
+	 * @param resource
+	 * @return boolean
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public <T extends Resource> boolean save(T resource) {
+
+		return sigleResourceOperation(resource, true);
+
+	}
+
+	/**
+	 * 添加同级资源，父资源必须存在，且在resouce对象携带对应父资源ID,必须同时将T的className存储到Resouce对象对应的pojo对象的字段中
+	 * （Resource及其子类的pojo对象必须都有一个resouceTypeClassName字段）
+	 * @Title: save
+	 * @param resources
+	 * @return boolean
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public <T extends Resource> boolean save(List<T> resources) {
+		return listOperation(resources, true);
+	}
+
+	/**
+	 * 更新资源,必须同时将T的className存储到Resouce对象对应的pojo对象的字段中
+	 * （Resource及其子类的pojo对象必须都有一个resouceTypeClassName字段）
+	 * @Title: update
+	 * @param resource
+	 * @return boolean
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public <T extends Resource> boolean update(T resource) {
+
+		return sigleResourceOperation(resource, false);
+
+	}
+
+	/**
+	 * 更新资源状态,必须同时将T的className存储到Resouce对象对应的pojo对象的字段中
+	 * （Resource及其子类的pojo对象必须都有一个resouceTypeClassName字段）
+	 * @Title: update
+	 * @param status
+	 * @return boolean
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public boolean update(String id, int status) {
+		if (id == null) {
+			return false;
+		}
+		ResourcePojo resourcePojo = new ResourcePojo();
+		resourcePojo.setId(id);
+		resourcePojo.setStatus(status);
+		return resourceAccessImpl.modifyResource(resourcePojo);
+	}
+
+	/**
+	 * 更新同级资源，父资源必须存在，且在resouce对象携带对应父资源ID,必须同时将T的className存储到Resouce对象对应的pojo对象的字段中
+	 * （Resource及其子类的pojo对象必须都有一个resouceTypeClassName字段）
+	 * @Title: update
+	 * @param resources
+	 * @return boolean
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public <T extends Resource> boolean update(List<T> resources) {
+
+		return listOperation(resources, false);
+	}
+
+	/**
+	 * 根据ID删除资源，同时删除该资源下所有子资源
+	 * @Title: delete
+	 * @param id
+	 * @return boolean
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public boolean delete(String id) {
+		if (id == null)
+			return false;
+		List<QueryCondition> condition = new ArrayList<>();
+		condition.add(new QueryCondition("id", new QueryOperator(QueryOperator.Operator.EQUAL), id));
+		return resourceAccessImpl.deleteResource(condition);
+	}
+
+	/**
+	 * 根据ID获取一个资源对象，必须是一个Resouce或者其子类
+	 * 必须根据对应的pojo对象的字段中的resouceTypeClassName字段返回具体子类对象
+	 * @Title: get
+	 * @param id
+	 * @return T
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public Resource get(String id) {
+
+		return null;
+	}
+
+	/**
+	 * 根据code获取一个资源对象，可以是一个Resouce或者其子类,必须是一个Resouce或者其子类
+	 * 必须根据对应的pojo对象的字段中的resouceTypeClassName字段返回具体子类对象
+	 * @Title: getByCode
+	 * @param code
+	 * @return T
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public Resource getByCode(String code) {
+		return null;
+	}
+
+	/**
+	 * 根据目标子设备的编码，向上递归查找目标子设备所属的终端资源对象
+	 * （递归查询，向上查询目标设备的第一个协议字段不为空的记录）
+	 * 返回必须是一个Resouce或者其子类
+	 * 必须根据对应的pojo对象的字段中的resouceTypeClassName字段返回具体子类对象
+	 * @Title: getTerminalIdByDeviceCode
+	 * @param code
+	 * @return String
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public Resource getTerminalByDeviceCode(String code) {
+		return null;
+	}
+
+	/**
+	 * 根据目标子设备的编码，向上递归查找目标子设备所属的终端资源对象
+	 * （递归查询，向上查询目标设备的第一个协议字段不为空的记录）
+	 * 返回必须是一个Resouce或者其子类
+	 * 必须根据对应的pojo对象的字段中的resouceTypeClassName字段返回具体子类对象
+	 * @Title: getTerminalIdByDeviceId
+	 * @param id
+	 * @return String
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public Resource getTerminalByDeviceId(String id) {
+		return null;
+	}
+
+	/**
+	 * 返回所有终端对象，必须是一个Resouce或者其子类
+	 * 必须根据对应的pojo对象的字段中的resouceTypeClassName字段返回具体子类对象
+	 * @Title: getTerminals
+	 * @param formIndex
+	 * @param toIndex
+	 * @return List<Resource>
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public List<Resource> getTerminals() {
+		return null;
+	}
+
+	/**
+	 * 分页查询资源，用于资源树维护
+	 * @Title: find
+	 * @param parentCode
+	 * @param formIndex
+	 * @param toIndex
+	 * @return List<Resource>
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public List<Resource> find(String parentCode, int formIndex, int toIndex) {
+		return null;
+	}
+
+	/**
+	 * 查询资源条数，用于资源树维护
+	 * @Title: count
+	 * @param parentCode
+	 * @return int
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public int count(String parentCode) {
+		return 0;
+	}
+
+	/**
+	 * 
+	 * 该方法包含资源对象的 save和update功能  (包含了类型判断、属性检查、类型转换、dao操作) 
+	 * @Title: sigleResourceOperation
+	 * @param resources
+	 * @param sign 添加=true   修改=update
+	 * @return boolean
+	 * @see 
+	 * @throws
+	 * @author Administrator
+	 */
+	private <T extends Resource> boolean sigleResourceOperation(T resource, boolean sign) {
+
+		// 判断父资源必须存在
+		if (checkItime(resource)) {
+			return false;
+		}
+
+		String className = resource.getClass().getName();
+		ProtocolTypeMeta protocolTypeMeta = null;
+		ResourceTypeMeta resourceTypeMeta = null;
+		Type type = null;
+
+		if (className.equals(Resource.class.getName())) {
+			// 普通资源：
+			Resource resource1 = (Resource) resource;
+			// 检查字段
+			if (checkProperty(resource1)) {
+				return false;
+			}
+			// 转换对象
+			ResourcePojo resourcePojo = changeType(resource1);
+			protocolTypeMeta = resource1.getProtocol();
+			resourceTypeMeta = resource1.getResourceType();
+			type = resource1.getType();
+			if (protocolTypeMeta != null) {
+				resourcePojo.setProtocolId(protocolTypeMeta.getId());
+			}
+
+			// 普通资源类型有这个资源属性吗？
+			if (resourceTypeMeta != null) {
+				resourcePojo.setResourceTypeId(resourceTypeMeta.getId());
+				if (type != null) {
+					resourcePojo.setTypeId(type.getId());
+				}
+			}
+			if (sign) {
+				return resourceAccessImpl.addResource(resourcePojo);
+			} else {
+				return resourceAccessImpl.modifyResource(resourcePojo);
+			}
+		}
+		if (className.equals(BaseDeviceInfo.class.getName())) {
+			// 通用设备 的子对象是必须存在吗?
+			BaseDeviceInfo baseDeviceInfo = (BaseDeviceInfo) resource;
+			if (checkProperty(baseDeviceInfo)) {
+				return false;
+			}
+
+			protocolTypeMeta = baseDeviceInfo.getProtocol();
+			resourceTypeMeta = baseDeviceInfo.getResourceType();
+			type = baseDeviceInfo.getType();
+			// 转换对象
+			BaseDeviceInfoPojo baseDeviceInfoPojo = changeType(baseDeviceInfo);
+			if (protocolTypeMeta != null) {
+
+				baseDeviceInfoPojo.setProtocolId(protocolTypeMeta.getId());
+
+			}
+			if (resourceTypeMeta != null) {
+
+				baseDeviceInfoPojo.setResourceTypeId(resourceTypeMeta.getId());
+
+				if (type != null) {
+
+					baseDeviceInfoPojo.setTypeId(type.getId());
+				}
+			}
+			if (sign) {
+				return deviceAccessImpl.addDeviceInfo(baseDeviceInfoPojo);
+			} else {
+				return deviceAccessImpl.modifyDeviceInfo(baseDeviceInfoPojo);
+			}
+		}
+		if (className.equals(DvrDeviceInfo.class.getName())) {
+			// 制定设备类型
+			DvrDeviceInfo dvrdeviceInfo = (DvrDeviceInfo) resource;
+
+			if (checkProperty(dvrdeviceInfo)) {
+				return false;
+			}
+			protocolTypeMeta = dvrdeviceInfo.getProtocol();
+			resourceTypeMeta = dvrdeviceInfo.getResourceType();
+			type = dvrdeviceInfo.getType();
+
+			// TODO 未完成 changeType(dvrdeviceInfo);
+			return false;
+		}
+
+		return false;
+	}
+
+	/**
+	 * 
+	 * 该方法包含资源集合的 save和update功能  (包含了类型判断、属性检查、类型转换、dao操作) 
+	 * @Title: listOperation
+	 * @param resources
+	 * @param sign
+	 * @return boolean
+	 * @see 
+	 * @throws
+	 * @author Administrator
+	 */
+	private <T extends Resource> boolean listOperation(List<T> resources, boolean sign) {
+		List<ResourcePojo> resourcePojos = null;
+		List<BaseDeviceInfoPojo> baseDeviceInfoPojos = null;
+		ProtocolTypeMeta protocolTypeMeta = null;
+		ResourceTypeMeta resourceTypeMeta = null;
+		Type type = null;
+		T resource = null;
+		Method method = null;
+		try {
+			method = resources.getClass().getMethod("get");
+		} catch (NoSuchMethodException | SecurityException e) {
+			e.printStackTrace();
+		}
+		Class<?> returnTypeClass = method.getReturnType();
+
+		if (Resource.class.getName().equals(returnTypeClass.getName())) {
+			// 普通资源
+			resourcePojos = new ArrayList<ResourcePojo>();
+			for (int i = 0; i < resources.size(); i++) {
+				resource = resources.get(i);
+				// 检查是否存在父资源
+				if (checkItime(resource)) {
+					return false;
+				}
+				Resource resource1 = (Resource) resource;
+				// 检查属性
+				if (checkProperty(resource1)) {
+					return false;
+				}
+
+				// 转换对象
+				ResourcePojo resourcePojo = changeType(resource1);
+				protocolTypeMeta = resource1.getProtocol();
+				resourceTypeMeta = resource1.getResourceType();
+				type = resource1.getType();
+				if (protocolTypeMeta != null) {
+					resourcePojo.setProtocolId(protocolTypeMeta.getId());
+				}
+
+				// 普通资源类型有这个资源属性吗？
+				if (resourceTypeMeta != null) {
+					resourcePojo.setResourceTypeId(resourceTypeMeta.getId());
+					if (type != null) {
+						resourcePojo.setTypeId(type.getId());
+					}
+				}
+				if (resourcePojos == null) {
+					resourcePojos = new ArrayList<ResourcePojo>();
+				}
+				resourcePojos.add(resourcePojo);
+
+			}
+			if (sign) {
+				return resourceAccessImpl.addResources(resourcePojos);
+
+			} else {
+				return resourceAccessImpl.modifyResources(resourcePojos);
+			}
+		} else if (BaseDeviceInfo.class.getName().equals(returnTypeClass.getName())) {
+			// 设备资源
+			baseDeviceInfoPojos = new ArrayList<BaseDeviceInfoPojo>();
+			for (int i = 0; i < resources.size(); i++) {
+				resource = resources.get(i);
+				// 检查是否存在父资源
+				if (checkItime(resource)) {
+					return false;
+				}
+				// 通用设备 的子对象是必须存在吗?
+				BaseDeviceInfo baseDeviceInfo = (BaseDeviceInfo) resource;
+				if (checkProperty(baseDeviceInfo)) {
+					return false;
+				}
+
+				protocolTypeMeta = baseDeviceInfo.getProtocol();
+				resourceTypeMeta = baseDeviceInfo.getResourceType();
+				type = baseDeviceInfo.getType();
+				// 转换对象
+				BaseDeviceInfoPojo baseDeviceInfoPojo = changeType(baseDeviceInfo);
+				if (protocolTypeMeta != null) {
+
+					baseDeviceInfoPojo.setProtocolId(protocolTypeMeta.getId());
+
+				}
+				if (resourceTypeMeta != null) {
+
+					baseDeviceInfoPojo.setResourceTypeId(resourceTypeMeta.getId());
+
+					if (type != null) {
+
+						baseDeviceInfoPojo.setTypeId(type.getId());
+					}
+				}
+
+				if (baseDeviceInfoPojos == null) {
+					baseDeviceInfoPojos = new ArrayList<BaseDeviceInfoPojo>();
+				}
+				baseDeviceInfoPojos.add(baseDeviceInfoPojo);
+			}
+			if (sign) {
+				return deviceAccessImpl.addDeviceInfos(baseDeviceInfoPojos);
+
+			} else {
+				return deviceAccessImpl.modifyDeviceInfos(baseDeviceInfoPojos);
+			}
+
+		} else if (DvrDeviceInfo.class.getName().equals(returnTypeClass.getName())) {
+
+			for (int i = 0; i < resources.size(); i++) {
+				resource = resources.get(i);
+				// 检查是否存在父资源
+				if (checkItime(resource)) {
+					return false;
+				}
+
+				// 制定设备类型
+				DvrDeviceInfo dvrdeviceInfo = (DvrDeviceInfo) resource;
+
+				if (checkProperty(dvrdeviceInfo)) {
+					return false;
+				}
+				protocolTypeMeta = dvrdeviceInfo.getProtocol();
+				resourceTypeMeta = dvrdeviceInfo.getResourceType();
+				type = dvrdeviceInfo.getType();
+
+				// TODO 未完成 changeType(dvrdeviceInfo);
+			}
+			return false;
+		}
+		return false;
+	}
+
+	/**
+	 * 对象检查
+	 * @Title: checkType
+	 * @param resource1 void
+	 * @return 
+	 * @see 
+	 * @throws
+	 * @author Administrator
+	 */
+	private boolean checkProperty(Resource resource1) {
+		// 1.父id 字段必须存在
+		return false;
+
+	}
+
+	/**
+	 * 类型转换
+	 * @Title: changeType
+	 * @param resource
+	 * @return ResourcePojo
+	 * @see 
+	 * @throws
+	 * @author Administrator
+	 */
+	private ResourcePojo changeType(Resource resource) {
+		ResourcePojo resourcePojo = new ResourcePojo();
+		resourcePojo.setCode(resource.getCode());
+		resourcePojo.setDesc(resource.getDesc());
+		resourcePojo.setId(resource.getId());
+		resourcePojo.setName(resource.getName());
+		resourcePojo.setParentId(resource.getParentId());
+		resourcePojo.setStatus(resource.getStatus());
+		resourcePojo.setResouceTypeClassName(resource.getClass().getName());
+		return resourcePojo;
+	}
+
+	/**
+	 * 类型转换
+	 * @Title: changeType
+	 * @param baseDeviceInfo
+	 * @return ResourcePojo
+	 * @see 
+	 * @throws
+	 * @author Administrator
+	 */
+	private BaseDeviceInfoPojo changeType(BaseDeviceInfo baseDeviceInfo) {
+		BaseDeviceInfoPojo baseDeviceInfoPojo = new BaseDeviceInfoPojo();
+		baseDeviceInfoPojo.setCode(baseDeviceInfo.getCode());
+		baseDeviceInfoPojo.setDesc(baseDeviceInfo.getDesc());
+		baseDeviceInfoPojo.setId(baseDeviceInfo.getId());
+		baseDeviceInfoPojo.setName(baseDeviceInfo.getName());
+		baseDeviceInfoPojo.setParentId(baseDeviceInfo.getParentId());
+		baseDeviceInfoPojo.setStatus(baseDeviceInfo.getStatus());
+		baseDeviceInfoPojo.setAddress(baseDeviceInfo.getAddress());
+		baseDeviceInfoPojo.setChannel(baseDeviceInfo.getChannel());
+		baseDeviceInfoPojo.setRemark(baseDeviceInfo.getRemark());
+		baseDeviceInfoPojo.setVender(baseDeviceInfo.getVender());
+		baseDeviceInfoPojo.setVersion(baseDeviceInfo.getVersion());
+		baseDeviceInfoPojo.setResouceTypeClassName(baseDeviceInfo.getClass().getName());
+		return baseDeviceInfoPojo;
+	}
+
+	/**
+	 * 检查元素父类资源是否存在
+	 * @Title: checkItime
+	 * @return boolean
+	 * @see 
+	 * @throws
+	 * @author Administrator
+	 */
+	private <T extends Resource> boolean checkItime(T resource) {
+		boolean result = true;
+		if (resource == null) {
+			return result;
+		}
+		// 判断父资源必须存在
+		if (resource.getParentId() != null) {
+			List<QueryCondition> condition = new ArrayList<>();
+			condition.add(new QueryCondition("parentId", new QueryOperator(QueryOperator.Operator.EQUAL), resource
+					.getParentId()));
+			if (resourceAccessImpl.queryResourceSize(condition) == 0) {
+				return result;
+			}
+		} else {
+			// 父资源不存在
+			return result;
+		}
+		result = false;
+		return result;
+	}
+
+}

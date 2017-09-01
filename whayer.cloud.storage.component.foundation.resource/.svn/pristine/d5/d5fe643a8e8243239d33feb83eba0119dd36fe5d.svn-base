@@ -1,0 +1,145 @@
+package com.whayer.cloud.storage.component.foundation.res;
+
+import java.util.List;
+
+import com.whayer.cloud.storage.business.base.data.res.Resource;
+
+public interface IResourceService {
+
+	/**
+	 * 添加资源
+	 * @Title: save
+	 * @param resource
+	 * @return boolean
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public <T extends Resource> boolean save(T resource);
+
+	/**
+	 * 添加同级资源，父资源必须存在，且在resouce对象携带对应父资源ID
+	 * @Title: save
+	 * @param resources
+	 * @return boolean
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public <T extends Resource> boolean save(List<T> resources);
+
+	/**
+	 * 更新资源
+	 * @Title: update
+	 * @param resource
+	 * @return boolean
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public <T extends Resource> boolean update(T resource);
+
+	/**
+	 * 更新资源状态
+	 * @Title: update
+	 * @param status
+	 * @return boolean
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public boolean update(String id, int status);
+
+	/**
+	 * 更新同级资源，父资源必须存在，且在resouce对象携带对应父资源ID
+	 * @Title: update
+	 * @param resources
+	 * @return boolean
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public <T extends Resource> boolean update(List<T> resources);
+
+	/**
+	 * 根据ID删除资源，同时删除该资源下所有子资源
+	 * @Title: delete
+	 * @param id
+	 * @return boolean
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public boolean delete(String id);
+
+	/**
+	 * 根据ID获取一个资源对象，可以是一个Resouce或者其子类,对象具体类型需要由调用者指定。
+	 * @Title: get
+	 * @param id
+	 * @return T
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public <T extends Resource> T get(Class<T> type, String id);
+
+	/**
+	 *根据code获取一个资源对象，可以是一个Resouce或者其子类,对象具体类型需要由调用者指定。
+	 * @Title: getByCode
+	 * @param code
+	 * @return T
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public <T extends Resource> T getByCode(Class<T> type, String code);
+
+	/**
+	 * 根据目标子设备的编码，向上递归查找目标子设备所属的终端资源对象，用户可以根据资源对象中的protocol类型来判断调用get(Class<T> type, String id) or  getByCode(Class<T> type, String code)需要传递的type具体型别
+	 * （递归查询，向上查询目标设备的第一个协议字段不为空的记录）
+	 * @Title: getTerminalIdByDeviceCode
+	 * @param code
+	 * @return String
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public Resource getTerminalByDeviceCode(String code);
+
+	/**
+	 * 根据目标子设备的编码，向上递归查找目标子设备所属的终端资源对象，用户可以根据资源对象中的protocol类型来判断调用get(Class<T> type, String id) or  getByCode(Class<T> type, String code)需要传递的type具体型别
+	 * （递归查询，向上查询目标设备的第一个协议字段不为空的记录）
+	 * @Title: getTerminalIdByDeviceId
+	 * @param id
+	 * @return String
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public Resource getTerminalByDeviceId(String id);
+
+	/**
+	 * 分页查询资源，用于资源树维护
+	 * @Title: find
+	 * @param parentCode
+	 * @param formIndex
+	 * @param toIndex
+	 * @return List<Resource>
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public List<Resource> find(String parentCode, int formIndex, int toIndex);
+
+	/**
+	 * 查询资源条数，用于资源树维护
+	 * @Title: count
+	 * @param parentCode
+	 * @return int
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public int count(String parentCode);
+
+}

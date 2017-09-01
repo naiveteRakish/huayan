@@ -1,0 +1,42 @@
+/**  
+ * 元数据管理
+ * @Title: MessageSourceTypeMetaPojo.java
+ * @Package com.whayer.cloud.storage.component.foundation.meta.beans
+ * @author Administrator
+ * @date 2017年8月16日 下午3:54:54
+ * @version v1.0.0
+ */
+package com.whayer.cloud.storage.component.foundation.meta.beans;
+
+/**
+ * 系统消息类型对象
+ * @ClassName: MessageSourceTypeMetaPojo
+ * @author Administrator
+ * @date 2017年8月16日 下午3:54:54
+ * @version v1.0.0
+ * 
+ */
+public class MessageSourceTypeMetaPojo {
+
+	/**
+	 * 类型ID
+	 */
+	protected String id;
+	/**
+	 * 类型编码
+	 */
+	protected String code;
+	/**
+	 * 类型名称
+	 */
+	protected String name;
+	/**
+	 * 类型名称描述
+	 */
+	protected String desc;
+	/**
+	 * 父类型ID
+	 */
+	protected String parentId;
+
+}

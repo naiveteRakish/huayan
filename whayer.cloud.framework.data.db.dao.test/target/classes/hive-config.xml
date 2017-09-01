@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+     <dataSource>
+         <property name="url" value="jdbc:hive2://cm4:10000/ttt;AuthMech=3;UID=cloudera-scm;PWD=123456;" />
+     </dataSource>
+</configuration>

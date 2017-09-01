@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite guice-stage="DEVELOPMENT" name="Failed suite [Default suite]">
+  <test name="Default test(failed)">
+    <classes>
+      <class name="whayer.cloud.storage.component.foundation.filemarkaccess.test.IFileMarkAccessTest">
+        <methods>
+          <include name="modifyFileInfoTest"/>
+          <include name="deleteFileInfoTest"/>
+          <include name="queryFileMarkInfoTest"/>
+          <include name="addFileMarkInfoTest"/>
+          <include name="addFileInfoTest"/>
+          <include name="modifyFileMarkInfoTest"/>
+          <include name="queryFileInfoTest"/>
+        </methods>
+      </class> <!-- whayer.cloud.storage.component.foundation.filemarkaccess.test.IFileMarkAccessTest -->
+    </classes>
+  </test> <!-- Default test(failed) -->
+</suite> <!-- Failed suite [Default suite] -->

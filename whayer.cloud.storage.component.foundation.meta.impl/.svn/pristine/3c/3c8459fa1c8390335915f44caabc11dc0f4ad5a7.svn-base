@@ -1,0 +1,686 @@
+package com.whayer.cloud.storage.component.foundation.meta.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import whayer.cloud.framework.data.db.dao.HibernateDao;
+import whayer.cloud.framework.data.db.dao.IDao;
+import whayer.cloud.framework.data.db.dao.criteria.Criteria;
+import whayer.cloud.framework.data.db.dao.criteria.Restrictions;
+import whayer.cloud.framework.data.db.dao.datasource.DataBaseException;
+import whayer.cloud.framework.data.db.dao.datasource.IDbSession;
+import whayer.cloud.framework.data.db.dao.datasource.IDbSessionFactory;
+import whayer.cloud.utility.core.BeanService;
+
+import com.whayer.cloud.component.objectcache.IOCSStatusNotifyCallback;
+import com.whayer.cloud.component.objectcache.IObjectCacheService;
+import com.whayer.cloud.component.objectcache.OCSStatus;
+import com.whayer.cloud.storage.business.alarm.data.AlarmMessageLevelMeta;
+import com.whayer.cloud.storage.business.alarm.data.AlarmMessageTypeMeta;
+import com.whayer.cloud.storage.business.base.data.QueryCondition;
+import com.whayer.cloud.storage.business.base.data.QueryOperator;
+import com.whayer.cloud.storage.business.base.data.msg.MessageSourceIficationTypeMeta;
+import com.whayer.cloud.storage.business.base.data.msg.MessageSourceTypeMeta;
+import com.whayer.cloud.storage.component.foundation.meta.IMetaDataService;
+
+public class MetaDataManagerImpl implements IMetaDataService {
+
+	private IDbSessionFactory factory;
+	private BeanService beanService;
+	private IObjectCacheService iobjectCacheService;
+
+	private ExecutorService executorService = Executors.newCachedThreadPool();
+	// redis重试次数 默认10
+	private static Integer REPETITION_TIME = 10;
+	private BlockingQueue<?> taskQueue;
+	// 类型集合
+	private List<String> typeList;
+	// redis默认连接失败
+	private volatile boolean redisStatus = false;
+
+	/**
+	 * @return the taskQueue
+	 */
+	public BlockingQueue<?> getTaskQueue() {
+		return taskQueue;
+	}
+
+	/**
+	 * @param taskQueue the taskQueue to set
+	 */
+	public void setTaskQueue(BlockingQueue<?> taskQueue) {
+		this.taskQueue = taskQueue;
+	}
+
+	/**
+	 * @return the typeList
+	 */
+	public List<String> getTypeList() {
+		return typeList;
+	}
+
+	/**
+	 * @param typeList the typeList to set
+	 */
+	public void setTypeList(List<String> typeList) {
+		this.typeList = typeList;
+	}
+
+	/**
+	 * @return the rEPETITIONTIME
+	 */
+	public static Integer getREPETITIONTIME() {
+		return REPETITION_TIME;
+	}
+
+	/**
+	 * @param rEPETITIONTIME the rEPETITIONTIME to set
+	 */
+	public static void setREPETITIONTIME(Integer rEPETITIONTIME) {
+		REPETITION_TIME = rEPETITIONTIME;
+	}
+
+	/**
+	 * @return the factory
+	 */
+	public IDbSessionFactory getFactory() {
+		return factory;
+	}
+
+	/**
+	 * @param factory the factory to set
+	 */
+	public void setFactory(IDbSessionFactory factory) {
+		this.factory = factory;
+	}
+
+	/**
+	 * @return the beanService
+	 */
+	public BeanService getBeanService() {
+		return beanService;
+	}
+
+	/**
+	 * @param beanService the beanService to set
+	 */
+	public void setBeanService(BeanService beanService) {
+		this.beanService = beanService;
+	}
+
+	/**
+	 * @return the iobjectCacheService
+	 */
+	public IObjectCacheService getIobjectCacheService() {
+		return iobjectCacheService;
+	}
+
+	/**
+	 * @param iobjectCacheService the iobjectCacheService to set
+	 */
+	public void setIobjectCacheService(IObjectCacheService iobjectCacheService) {
+
+		this.iobjectCacheService = iobjectCacheService;
+		this.iobjectCacheService = iobjectCacheService;
+		// TODO 是否还需要先初始化 this.iobjectCacheService.start();
+
+		try {
+			initListObject();
+			redisStatus = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		this.iobjectCacheService.subscribeStatus(new IOCSStatusNotifyCallback() {
+
+			@Override
+			public void notifyStatus(OCSStatus status) {
+				if (OCSStatus.OFF_LINE == status) {
+					// TODO 下线
+					redisStatus = false;
+					executorService.shutdownNow();
+					taskQueue.clear();
+				} else {
+					// TODO 上线
+					try {
+						executorService = beanService.getBean("redisCache");
+						initListObject();
+						redisStatus = true;
+					} catch (ClassNotFoundException e) {
+
+						e.printStackTrace();
+					}
+
+				}
+
+			}
+		});
+	}
+
+	/**
+	 * 将数据库所有元数据表缓存到redis中待用
+	 * @throws ClassNotFoundException 
+	 * @Title: initList void
+	 * @see 
+	 * @throws
+	 * @author Administrator
+	 */
+	private void initListObject() throws ClassNotFoundException {
+		// TODO Auto-generated method stub
+		for (String type : typeList) {
+			iobjectCacheService.saveListObject(getRedisKey(Class.forName(type)),
+					this.getMetaData(AlarmMessageLevelMeta.class, new ArrayList<QueryCondition>()));
+		}
+	}
+
+	/**
+	 * @return the executorService
+	 */
+	public ExecutorService getExecutorService() {
+		return executorService;
+	}
+
+	/**
+	 * @param executorService the executorService to set
+	 */
+	public void setExecutorService(ExecutorService executorService) {
+		this.executorService = executorService;
+	}
+
+	private void executeCache(Runnable runnable) {
+		if (redisStatus) {
+			// redis 在线
+			executorService.execute(runnable);
+		} else {
+			// redis 不在线
+		}
+	}
+
+	/**
+	 * 生成该对象的rediskey
+	 * @Title: getRedisKey
+	 * @param item
+	 * @return String
+	 * @see 
+	 * @throws
+	 * @author Administrator
+	 */
+	private <T> String getRedisKey(T item) {
+		StringBuilder sb = new StringBuilder(
+				"COM.WHAYER.CLOUD.STORAGE.COMPONENT.FOUNDATION.META.IMPL.METADATAMANAGERIMPL");
+		sb.append(item.getClass().getName().toUpperCase());
+		return sb.toString();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> boolean addMetaData(final T item) {
+		if (item == null) {
+			return false;
+		}
+		if (!(item instanceof AlarmMessageLevelMeta || item instanceof AlarmMessageTypeMeta
+				|| item instanceof MessageSourceIficationTypeMeta || item instanceof MessageSourceTypeMeta)) {
+			return false;
+		}
+		IDbSession session = null;
+		boolean result = true;
+		try {
+			session = factory.getSession();
+			IDao dao = beanService.getBean(HibernateDao.class);
+			session.beginTransaction();
+			dao.setSession(session);
+			dao.insert(item);
+			session.commit();
+		} catch (Exception e) {
+			result = false;
+			e.printStackTrace();
+			try {
+				if (session != null) {
+					session.rollback();
+				}
+			} catch (DataBaseException dataBaseException) {
+
+				dataBaseException.printStackTrace();
+			}
+		}
+		if (result) {
+			// 执行缓存
+			executeCache(new Runnable() {
+
+				@Override
+				public void run() {
+					// for (int j = 0;
+					// !objectCacheService.addListObjectItem(getRedisKey(item),
+					// item)
+					// && j != REPETITIONTIME; j++)
+					// ;
+				}
+			});
+
+		}
+
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> boolean addMetaDatas(final List<T> items) {
+		if (items == null || items.size() == 0) {
+			return false;
+		}
+
+		// 这样的集合 是否要做校验呢
+		boolean boo = false;
+		for (int i = 0; i < items.size(); i++) {
+			if (items.get(i) == null) {
+				return false;
+			}
+			String name = items.get(i).getClass().getName();
+			boo = true;
+			for (String typeItem : typeList) {
+				if ((name.equals(typeItem))) {
+					boo = false;
+					break;
+				}
+			}
+			if (boo) {
+				return false;
+			}
+		}
+
+		IDbSession session = null;
+		boolean result = true;
+		try {
+			session = factory.getSession();
+			IDao dao = beanService.getBean(HibernateDao.class);
+			dao.setSession(session);
+			session.beginTransaction();
+			dao.insert(items.toArray());
+			session.commit();
+		} catch (Exception e) {
+			result = false;
+			e.printStackTrace();
+			try {
+				if (session != null) {
+					session.rollback();
+				}
+			} catch (DataBaseException dataBaseException) {
+
+				dataBaseException.printStackTrace();
+			}
+		}
+		if (result) {
+			// 执行缓存
+			executeCache(new Runnable() {
+
+				@Override
+				public void run() {
+					// LinkedList<T> linkedList = new LinkedList<T>();
+					// for (int i = 0; i < items.size(); i++) {
+					// if
+					// (!objectCacheService.addListObjectItem(getRedisKey(items.get(i)),
+					// items.get(i))) {
+					// // 添加失败的，存入失败列表。
+					// linkedList.add(items.get(i));
+					// }
+					// }
+					// int maxTime = linkedList.size() * REPETITIONTIME;
+					// while (linkedList.size() > 0) {
+					// int i = 0;
+					// for (int j = 0; j < linkedList.size(); j++) {
+					// if
+					// (objectCacheService.addListObjectItem(getRedisKey(linkedList.get(j)),
+					// linkedList.get(j))) {
+					// // 重试成功，从失败列表移除
+					// linkedList.remove(j);
+					// j--;
+					// }
+					// }
+					// i++;
+					// if (maxTime < i) {
+					// // 每条数据重试大概超过10次 则放弃继续执行
+					// break;
+					// }
+					// }
+				}
+			});
+		}
+
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> boolean modifyMetaData(final T item) {
+		if (item == null) {
+			return false;
+		}
+		boolean boo = true;
+		for (String typeItem : typeList) {
+			if ((item.getClass().getName().equals(typeItem))) {
+				boo = false;
+				break;
+			}
+		}
+		if (boo) {
+			return false;
+		}
+
+		IDbSession session = null;
+		boolean result = true;
+		try {
+			session = factory.getSession();
+			session.clear();
+			session.beginTransaction();
+			IDao dao = beanService.getBean(HibernateDao.class);
+			dao.setSession(session);
+			dao.update(item);
+			session.commit();
+		} catch (Exception e) {
+			result = false;
+			e.printStackTrace();
+			try {
+				if (session != null) {
+					session.rollback();
+				}
+			} catch (DataBaseException dataBaseException) {
+
+				dataBaseException.printStackTrace();
+			}
+		}
+		if (result) {
+
+			// 执行缓存
+			executeCache(new Runnable() {
+				@Override
+				public void run() {
+					// Map<Integer, ? extends Object> map =
+					// objectCacheService.indexListObjectItem(getRedisKey(item),
+					// item.getClass(), "id", ((Type) item).getId());
+					// Integer keyInteger = null;
+					// for (Map.Entry entry : map.entrySet()) {
+					// keyInteger = (Integer) entry.getKey();
+					// }
+					// for (int j = 0;
+					// !objectCacheService.replaceListObjectItem(getRedisKey(item),
+					// keyInteger, item)
+					// && j != REPETITIONTIME; j++)
+					// ;
+				}
+			});
+		}
+
+		return result;
+	}
+
+	@Override
+	public <T> boolean deleteMetaData(final Class<T> type, final String id) {
+		if (type == null || id == null || "".equals(id.trim())) {
+			return false;
+		}
+
+		boolean boo = true;
+		for (String typeItem : typeList) {
+			if ((type.getName().equals(typeItem))) {
+				boo = false;
+				break;
+			}
+		}
+
+		if (boo) {
+			return false;
+		}
+
+		IDbSession session = null;
+		boolean result = true;
+		try {
+			session = factory.getSession();
+			session.clear();
+			session.beginTransaction();
+			IDao dao = beanService.getBean(HibernateDao.class);
+			dao.setSession(session);
+			dao.delete(type, id);
+			session.commit();
+		} catch (Exception e) {
+			result = false;
+			e.printStackTrace();
+			try {
+				if (session != null) {
+					session.rollback();
+				}
+			} catch (DataBaseException dataBaseException) {
+
+				dataBaseException.printStackTrace();
+			}
+		}
+		if (result) {
+			// 执行缓存
+			executeCache(new Runnable() {
+				@Override
+				public void run() {
+					// for (int j = 0;
+					// !objectCacheService.removeListObjectItem(getRedisKey(type),
+					// "id", id)
+					// && j != REPETITIONTIME; j++)
+					// ;
+
+				}
+			});
+		}
+
+		return result;
+	}
+
+	@Override
+	public <T> boolean deleteMetaData(final Class<T> type) {
+		if (type == null) {
+			return false;
+		}
+		// 校验类型
+
+		boolean boo = true;
+		for (String typeItem : typeList) {
+			if ((type.getName().equals(typeItem))) {
+				boo = false;
+				break;
+			}
+		}
+
+		if (boo) {
+			return false;
+		}
+
+		IDbSession session = null;
+		boolean result = true;
+		try {
+			session = factory.getSession();
+			session.clear();
+			session.beginTransaction();
+			IDao dao = beanService.getBean(HibernateDao.class);
+			dao.setSession(session);
+			dao.delete(type, (Criteria) null);
+			session.commit();
+		} catch (Exception e) {
+			result = false;
+			e.printStackTrace();
+			try {
+				if (session != null) {
+					session.rollback();
+				}
+			} catch (DataBaseException dataBaseException) {
+
+				dataBaseException.printStackTrace();
+			}
+		}
+		if (result) {
+			// 执行缓存
+			executeCache(new Runnable() {
+
+				@Override
+				public void run() {
+					// for (int j = 0;
+					// !objectCacheService.deleteListObject(getRedisKey(type))
+					// && j != REPETITIONTIME; j++)
+					// ;
+				}
+			});
+		}
+		return result;
+	}
+
+	@Override
+	public <T> T getMetaData(Class<T> type, String id) {
+		IDbSession session = null;
+		T result = null;
+		if (type == null || id == null || "".equals(id.trim())) {
+			return result;
+		}
+
+		boolean boo = true;
+		for (String typeItem : typeList) {
+			if ((type.getName().equals(typeItem))) {
+				boo = false;
+				break;
+			}
+		}
+
+		if (boo) {
+			return result;
+		}
+
+		// 查询缓存
+		// try {
+		// result = objectCacheService.getObject(getRedisKey(type), type);
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
+
+		if (result == null) {
+
+			try {
+				session = factory.getSession();
+				IDao dao = beanService.getBean(HibernateDao.class);
+				dao.setSession(session);
+				result = dao.selectOne(type, id);
+			} catch (Exception e) {
+				e.printStackTrace();
+				try {
+					if (session != null) {
+						session.rollback();
+					}
+				} catch (DataBaseException dataBaseException) {
+
+					dataBaseException.printStackTrace();
+				}
+			}
+			if (result != null) {
+				// 执行缓存
+				final T var = result;
+				executeCache(new Runnable() {
+
+					@Override
+					public void run() {
+						// for (int j = 0;
+						// !objectCacheService.addListObjectItem(getRedisKey(var),
+						// var)
+						// && j != REPETITIONTIME; j++)
+						// ;
+					}
+				});
+			}
+		}
+
+		return result;
+	}
+
+	@Override
+	public <T> List<T> getMetaData(Class<T> type, List<QueryCondition> condition) {
+		IDbSession session = null;
+		List<T> result = null;
+		if (type == null || condition == null) {
+			return result;
+		}
+		boolean boo = true;
+		for (String typeItem : typeList) {
+			if ((type.getName().equals(typeItem))) {
+				boo = false;
+				break;
+			}
+		}
+
+		if (boo) {
+			return result;
+		}
+		Criteria where = null;
+		if (condition.size() > 0) {
+			where = new Criteria();
+			for (QueryCondition c : condition) {
+				if (c != null && c.getKey() != null && !c.getKey().equals("") && c.getQueryOperator() != null
+						&& c.getValue() != null) {
+					if (c.getQueryOperator().getOperator() == QueryOperator.Operator.EQUAL) {
+						where.add(Restrictions.eq(type, c.getKey(), c.getValue()));
+					} else if (c.getQueryOperator().getOperator() == QueryOperator.Operator.LIKE) {
+						where.add(Restrictions.like(type, c.getKey(), c.getValue().toString()));
+					}
+
+				}
+			}
+
+		}
+		// TODO 按条件查询缓存 等待接口
+
+		if (result == null || result.size() == 0) {
+
+			try {
+				session = factory.getSession();
+				IDao dao = beanService.getBean(HibernateDao.class);
+				dao.setSession(session);
+				result = dao.selectList(type, where);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			if (result != null && result.size() != 0) {
+				final List<T> list = result;
+				// 执行缓存
+				executeCache(new Runnable() {
+
+					@Override
+					public void run() {
+						// LinkedList<T> linkedList = new LinkedList<T>();
+						// for (int i = 0; i < list.size(); i++) {
+						// if
+						// (!objectCacheService.addListObjectItem(getRedisKey(list.get(i)),
+						// list.get(i))) {
+						// // 添加失败的，存入失败列表。
+						// linkedList.add(list.get(i));
+						// }
+						// }
+						// int maxTime = linkedList.size() * REPETITIONTIME;
+						// while (linkedList.size() > 0) {
+						// int i = 0;
+						// for (int j = 0; j < linkedList.size(); j++) {
+						// if
+						// (objectCacheService.addListObjectItem(getRedisKey(linkedList.get(j)),
+						// linkedList.get(j))) {
+						// // 重试成功，从失败列表移除
+						// linkedList.remove(j);
+						// j--;
+						// }
+						// }
+						// i++;
+						// if (maxTime < i) {
+						// // 每条数据重试大概超过10次 则放弃继续执行
+						// break;
+						// }
+						// }
+					}
+				});
+			}
+		}
+
+		return result;
+	}
+}

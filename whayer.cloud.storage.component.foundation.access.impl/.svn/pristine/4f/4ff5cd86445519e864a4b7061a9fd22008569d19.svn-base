@@ -1,0 +1,7 @@
+<h2>Groups used for this test run</h2><table border="1">
+<tr> <td align="center"><b>Group name</b></td><td align="center"><b>Methods</b></td></tr><tr><td>add</td><td>AccessImplTest.savleAlarmMessageLevelMetaTest()[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]<br/></td></tr>
+<tr><td>add1</td><td>AccessImplTest.savleAlarmMessageLevelMetaListTest()[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]<br/></td></tr>
+<tr><td>query</td><td>AccessImplTest.searchAlarmInfoListTest()[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]<br/></td></tr>
+<tr><td>singleDelete</td><td>AccessImplTest.deleteAlarmInfoListTest()[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]<br/></td></tr>
+<tr><td>update</td><td>AccessImplTest.updateListTest()[pri:0, instance:whayer.cloud.storage.component.foundation.access.impl.test.AccessImplTest@65630be5]<br/></td></tr>
+</table>

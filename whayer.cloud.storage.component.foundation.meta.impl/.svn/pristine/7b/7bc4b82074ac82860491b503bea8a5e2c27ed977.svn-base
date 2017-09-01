@@ -1,0 +1,130 @@
+package com.whayer.cloud.storage.component.foundation.meta.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.testng.annotations.Test;
+
+import com.whayer.cloud.storage.business.alarm.data.AlarmMessageLevelMeta;
+import com.whayer.cloud.storage.business.alarm.data.AlarmMessageTypeMeta;
+import com.whayer.cloud.storage.business.base.data.msg.MessageSourceTypeMeta;
+import com.whayer.cloud.storage.component.foundation.meta.IMetaDataManager;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.fail;
+
+@Test
+@ContextConfiguration(locations = { "classpath:application-context.xml" })
+public class MetaDataManagerTest  extends AbstractTestNGSpringContextTests {
+	
+	@Autowired
+	private IMetaDataManager metaDataManager;
+	
+	@Test()
+	public void addMetaDataTest() {
+		metaDataManager.deleteMetaData(AlarmMessageTypeMeta.class);
+		AlarmMessageTypeMeta alarmType = new AlarmMessageTypeMeta();
+		alarmType.setId("11111");
+		alarmType.setCode("21334211");
+		alarmType.setDesc("MOTION_ALARM_TYPE");
+		alarmType.setName("MOTION_ALARM_TYPE");
+		alarmType.setParentId("234");
+		assertTrue(metaDataManager.addMetaData(alarmType));
+		alarmType.setName("MOTION_ALARM_TYPE_Y");
+		assertFalse(metaDataManager.addMetaData(alarmType));
+	}
+	@Test()
+	public void addMetaDatasTest() {
+		metaDataManager.deleteMetaData(AlarmMessageLevelMeta.class);
+		AlarmMessageLevelMeta level1 = new AlarmMessageLevelMeta();
+		AlarmMessageLevelMeta level2 = new AlarmMessageLevelMeta();
+		
+		level1.setId("222222");
+		level1.setCode("2133421121");
+		level1.setDesc("ALARM_LEVEL_ONE");
+		level1.setName("ALARM_LEVEL_ONE");
+		
+		level2.setId("33333");
+		level2.setCode("213dfd34211");
+		level2.setDesc("ALARM_LEVEL_TWO");
+		level2.setName("ALARM_LEVEL_TWO");
+		List<AlarmMessageLevelMeta> alarmLevelLst = new ArrayList<AlarmMessageLevelMeta>();
+		alarmLevelLst.add(level1);
+		alarmLevelLst.add(level2);
+		assertTrue(metaDataManager.addMetaDatas(alarmLevelLst));
+	}
+	@Test(dependsOnMethods = "addMetaDataTest")
+	public void modifyMetaDataTest() {
+		AlarmMessageTypeMeta alarmType = new AlarmMessageTypeMeta();
+		alarmType.setId("11111");
+		alarmType.setCode("21334211");
+		alarmType.setDesc("MOTION_ALARM_TYPE_MODIFY");
+		alarmType.setName("MOTION_ALARM_TYPE_MODIFY");
+		alarmType.setParentId("2342");
+		assertTrue(metaDataManager.modifyMetaData(alarmType));
+	}
+	@Test(dependsOnMethods = "addMetaDatasTest")
+	public void deleteMetaDataByIDTest() {
+		assertTrue(metaDataManager.deleteMetaData(AlarmMessageLevelMeta.class, "222222"));
+	}
+	@Test(dependsOnMethods = "deleteMetaDataByIDTest")
+	public void deleteMetaDataTest() {
+		assertTrue(metaDataManager.deleteMetaData(AlarmMessageLevelMeta.class));
+	}
+	@Test()
+	public void getMetaDataByIDTest() {
+		AlarmMessageTypeMeta meta = metaDataManager.getMetaData(AlarmMessageTypeMeta.class, "11111");
+		assertNotNull(meta);
+	}
+	@Test()
+	public void getMetaDataTest() {
+		metaDataManager.deleteMetaData(MessageSourceTypeMeta.class);
+		MessageSourceTypeMeta deviceType1 = new MessageSourceTypeMeta();
+		MessageSourceTypeMeta deviceType2 = new MessageSourceTypeMeta();
+		MessageSourceTypeMeta deviceType3 = new MessageSourceTypeMeta();
+		deviceType1.setId("11111");
+		deviceType1.setCode("21334211");
+		deviceType1.setDesc("RPU_TYPE");
+		deviceType1.setName("RPU_TYPE");
+		deviceType1.setParentId("234");
+		
+		deviceType2.setId("22222");
+		deviceType2.setCode("213df34211");
+		deviceType2.setDesc("CAMERA_TYPE");
+		deviceType2.setName("CAMERA_TYPE");
+		deviceType2.setParentId("11111");
+		
+		deviceType3.setId("3333");
+		deviceType3.setCode("2133ds34211");
+		deviceType3.setDesc("DVR_TYPE");
+		deviceType3.setName("DVR_TYPE");
+		deviceType3.setParentId("234");
+		
+		List<MessageSourceTypeMeta> metaLst = new ArrayList<MessageSourceTypeMeta>();
+		metaLst.add(deviceType1);
+		metaLst.add(deviceType2);
+		metaLst.add(deviceType3);
+		assertTrue(metaDataManager.addMetaDatas(metaLst));
+		
+		Map<String, String> condition = new HashMap<String, String>();
+		condition.put("parentId", "234");
+		List<AlarmMessageTypeMeta> metas = metaDataManager.getMetaData(AlarmMessageTypeMeta.class, condition);
+		assertNotNull(metas);
+		assertEquals(metas.size(), 2);
+		condition.put("name", "RPU_TYPE");
+		metas = metaDataManager.getMetaData(AlarmMessageTypeMeta.class, condition);
+		assertNotNull(metas);
+		assertEquals(metas.size(), 1);
+	}
+}

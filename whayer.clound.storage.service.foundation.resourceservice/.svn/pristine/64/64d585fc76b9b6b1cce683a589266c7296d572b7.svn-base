@@ -1,0 +1,15 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<bean id="beanService" class="whayer.cloud.utility.core.BeanService" />
+	<bean id="hibernateSessionFacotry"
+		class="whayer.cloud.framework.data.db.dao.datasource.HibernateDbSessionFactory" />
+	<bean id="hibernateDao" class="whayer.cloud.framework.data.db.dao.HibernateDao"
+		scope="prototype" />
+	<bean id="simpleHibernateDao"
+		class="whayer.cloud.storage.component.foundation.access.dao.SimpleHibernateDao"
+		scope="prototype">
+		<property name="sessionFactory" ref="hibernateSessionFacotry" />
+	</bean>
+</beans>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" ignored="0" total="10" passed="10">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Default suite" duration-ms="3192" started-at="2017-08-24T02:15:17Z" finished-at="2017-08-24T02:15:20Z">
+    <groups>
+      <group name="update">
+        <method signature="ResourceServiceImplTest.update()[pri:0, instance:com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest@479aff01]" name="update" class="com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest"/>
+        <method signature="ResourceServiceImplTest.update1()[pri:0, instance:com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest@479aff01]" name="update1" class="com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest"/>
+        <method signature="ResourceServiceImplTest.update2()[pri:0, instance:com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest@479aff01]" name="update2" class="com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest"/>
+      </group> <!-- update -->
+      <group name="query">
+        <method signature="ResourceServiceImplTest.count()[pri:0, instance:com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest@479aff01]" name="count" class="com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest"/>
+        <method signature="ResourceServiceImplTest.find()[pri:0, instance:com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest@479aff01]" name="find" class="com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest"/>
+        <method signature="ResourceServiceImplTest.get()[pri:0, instance:com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest@479aff01]" name="get" class="com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest"/>
+        <method signature="ResourceServiceImplTest.getByCode()[pri:0, instance:com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest@479aff01]" name="getByCode" class="com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest"/>
+      </group> <!-- query -->
+      <group name="delete">
+        <method signature="ResourceServiceImplTest.delete()[pri:0, instance:com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest@479aff01]" name="delete" class="com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest"/>
+      </group> <!-- delete -->
+      <group name="add2">
+        <method signature="ResourceServiceImplTest.save1()[pri:0, instance:com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest@479aff01]" name="save1" class="com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest"/>
+      </group> <!-- add2 -->
+      <group name="add1">
+        <method signature="ResourceServiceImplTest.save()[pri:0, instance:com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest@479aff01]" name="save" class="com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest"/>
+      </group> <!-- add1 -->
+    </groups>
+    <test name="Default test" duration-ms="3192" started-at="2017-08-24T02:15:17Z" finished-at="2017-08-24T02:15:20Z">
+      <class name="com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest">
+        <test-method status="PASS" signature="beforeTest()[pri:0, instance:com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest@479aff01]" name="beforeTest" is-config="true" duration-ms="2604" started-at="2017-08-24T10:15:17Z" finished-at="2017-08-24T10:15:19Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- beforeTest -->
+        <test-method status="PASS" signature="save()[pri:0, instance:com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest@479aff01]" name="save" duration-ms="21" started-at="2017-08-24T10:15:19Z" finished-at="2017-08-24T10:15:19Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- save -->
+        <test-method status="PASS" signature="save1()[pri:0, instance:com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest@479aff01]" name="save1" duration-ms="75" depends-on-groups="add1" started-at="2017-08-24T10:15:19Z" finished-at="2017-08-24T10:15:19Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- save1 -->
+        <test-method status="PASS" signature="update()[pri:0, instance:com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest@479aff01]" name="update" duration-ms="13" depends-on-groups="add2" started-at="2017-08-24T10:15:19Z" finished-at="2017-08-24T10:15:19Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- update -->
+        <test-method status="PASS" signature="update1()[pri:0, instance:com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest@479aff01]" name="update1" duration-ms="136" depends-on-groups="add2" started-at="2017-08-24T10:15:19Z" finished-at="2017-08-24T10:15:19Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- update1 -->
+        <test-method status="PASS" signature="update2()[pri:0, instance:com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest@479aff01]" name="update2" duration-ms="69" depends-on-groups="add2" started-at="2017-08-24T10:15:19Z" finished-at="2017-08-24T10:15:20Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- update2 -->
+        <test-method status="PASS" signature="count()[pri:0, instance:com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest@479aff01]" name="count" duration-ms="13" depends-on-groups="update" started-at="2017-08-24T10:15:20Z" finished-at="2017-08-24T10:15:20Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- count -->
+        <test-method status="PASS" signature="find()[pri:0, instance:com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest@479aff01]" name="find" duration-ms="32" depends-on-groups="update" started-at="2017-08-24T10:15:20Z" finished-at="2017-08-24T10:15:20Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- find -->
+        <test-method status="PASS" signature="get()[pri:0, instance:com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest@479aff01]" name="get" duration-ms="129" depends-on-groups="update" started-at="2017-08-24T10:15:20Z" finished-at="2017-08-24T10:15:20Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- get -->
+        <test-method status="PASS" signature="getByCode()[pri:0, instance:com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest@479aff01]" name="getByCode" duration-ms="39" depends-on-groups="update" started-at="2017-08-24T10:15:20Z" finished-at="2017-08-24T10:15:20Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- getByCode -->
+        <test-method status="PASS" signature="delete()[pri:0, instance:com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest@479aff01]" name="delete" duration-ms="28" depends-on-groups="query" started-at="2017-08-24T10:15:20Z" finished-at="2017-08-24T10:15:20Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- delete -->
+      </class> <!-- com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>

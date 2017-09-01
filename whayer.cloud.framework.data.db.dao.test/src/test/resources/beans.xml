@@ -1,0 +1,78 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd">
+                        
+    <bean id="beanService" class="whayer.cloud.utility.core.BeanService">
+		
+	</bean>
+	
+    <bean id="myBatisSessionFactory" class="whayer.cloud.framework.data.db.dao.datasource.MyBatisDbSessionFactory">
+		
+	</bean>
+	
+	<bean id="myBatisDbAdmin" class="whayer.cloud.framework.data.db.dao.metadata.MyBatisDbAdmin">
+		
+	</bean>
+	
+	<bean id="myBatisDbSystemInfoDAO" class="whayer.cloud.dbSystemInfoDao.DbSystemInfoDaoMyBatisImpl">
+		
+	</bean>
+	
+	<bean id="hibernateSessionFacotry" class="whayer.cloud.framework.data.db.dao.datasource.HibernateDbSessionFactory">
+		
+	</bean>
+	
+	<bean id="hibernateDbAdmin" class="whayer.cloud.framework.data.db.dao.metadata.HibernateDbAdmin">
+		
+	</bean>
+	
+	<bean id="hibernateDbSystemInfoDAO" class="whayer.cloud.dbSystemInfoDao.DbSystemInfoDaoHibernateImpl">
+		
+	</bean>
+	
+	<bean id="impalaSessionFactory" class="whayer.cloud.framework.data.db.dao.datasource.ImpalaDbSessionFactory">
+		
+	</bean>
+	
+	<bean id="impalaDbAdmin" class="whayer.cloud.framework.data.db.dao.metadata.ImpalaDbAdmin">
+		
+	</bean>
+	
+	<bean id="impalaDbSystemInfoDAO" class="whayer.cloud.dbSystemInfoDao.DbSystemInfoDaoImpalaImpl">
+		
+	</bean>
+	
+	<bean id="hiveSession" class="whayer.cloud.framework.data.db.dao.datasource.HiveDbSessionFactory">
+		
+	</bean>
+	
+	<bean id="hiveDbAdmin" class="whayer.cloud.framework.data.db.dao.metadata.HiveDbAdmin">
+		
+	</bean>
+	
+	<bean id="hiveDbSystemInfoDAO" class="whayer.cloud.dbSystemInfoDao.DbSystemInfoDaoHiveImpl">
+		
+	</bean>
+	
+	<bean id="hBaseSessionFactory" class="whayer.cloud.framework.data.db.dao.datasource.HBaseDbSessionFactory">
+		
+	</bean>
+	
+	<bean id="hBaseDbAdmin" class="whayer.cloud.framework.data.db.dao.metadata.HBaseDbAdmin">
+		
+	</bean>
+	
+	<bean id="hBaseDbSystemInfoDAO" class="whayer.cloud.dbSystemInfoDao.DbSystemInfoDaoHBaseImpl">
+		
+	</bean>
+	
+	<bean id="bigDatabaseDbAdmin" class="whayer.cloud.framework.data.db.dao.metadata.BigDataBaseAdmin">
+		
+	</bean>
+	
+	<bean id="bigDatabaseDbSystemInfoDAO" class="whayer.cloud.dbSystemInfoDao.DbSystemInfoDaoBigDataBaseImpl">
+		
+	</bean>
+	
+</beans>

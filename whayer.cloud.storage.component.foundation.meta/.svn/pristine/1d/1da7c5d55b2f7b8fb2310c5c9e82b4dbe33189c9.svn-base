@@ -1,0 +1,38 @@
+package com.whayer.cloud.storage.component.foundation.meta;
+
+import java.util.List;
+
+public interface IMetaCacheService {
+	/**
+	 * 将具体对象同步到缓存
+	 * @Title: syncMetaCache
+	 * @param @param item
+	 * @return void
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public <T> void syncMetaCache(T item);
+	
+	/**
+	 * 将具体对象同步到缓存
+	 * @Title: syncMetaCache
+	 * @param @param item
+	 * @return void
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public <T> void syncMetaCache(List<T> items);
+	
+	/**
+	 * 从缓存中删除制定对象
+	 * @Title: deleteMetaCache
+	 * @param @param item
+	 * @return void
+	 * @see 
+	 * @throws 
+	 * @author lishibang
+	 */
+	public <T> void deleteMetaCache(T item);
+}

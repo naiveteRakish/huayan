@@ -1,0 +1,47 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd">
+                        
+    <bean id="beanService" class="whayer.cloud.utility.core.BeanService">
+		
+	</bean>
+	
+	<bean id="hibernateSessionFacotry" class="whayer.cloud.framework.data.db.dao.datasource.HibernateDbSessionFactory">
+		
+	</bean>
+	
+	<bean id="hibernateDbAdmin" class="whayer.cloud.framework.data.db.dao.metadata.HibernateDbAdmin" scope="prototype">
+		
+	</bean>
+	
+	<bean id="hibernateDAO" class="whayer.cloud.framework.data.db.dao.HibernateDao" scope="prototype">
+		
+	</bean>
+	<bean id="timeUnit" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">    
+	        <property name="staticField" value="java.util.concurrent.TimeUnit.MINUTES" />    
+	</bean>  
+	<bean id="linkedBlockingDeque" class="java.util.concurrent.LinkedBlockingDeque">
+	</bean>
+							 <!--  int corePoolSize,
+                              int maximumPoolSize,
+                              long keepAliveTime,
+                              TimeUnit unit,
+                              BlockingQueue<Runnable> workQueue -->
+	<bean id="redisCache" class="java.util.concurrent.ThreadPoolExecutor">
+		 <constructor-arg index="0" type="int" value="10"/>
+      	 <constructor-arg index="1" type="int" value="50"/>
+      	 <constructor-arg index="2" type="int" value="25"/>
+      	 <constructor-arg index="3"  ref="timeUnit"/>
+      	 <constructor-arg index="4"  ref="linkedBlockingDeque" />
+	</bean>
+	<bean id="objectCacheService" class="com.whayer.cloud.component.objectcache.impl.ObjectCacheService"></bean>
+	<bean id="metaDataManagerImpl" class="com.whayer.cloud.storage.component.foundation.meta.impl.MetaDataManagerImpl">
+		<property name="factory" ref="hibernateSessionFacotry" />
+		<property name="beanService" ref="beanService" />
+		<property name="objectCacheService" ref="objectCacheService" />
+		<property name="factory" ref="hibernateSessionFacotry" />
+		<property name="executorService" ref="redisCache"></property>
+	</bean>
+		
+</beans>

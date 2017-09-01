@@ -1,0 +1,12 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd">
+  <!--资源服务管理对象  -->
+  <bean id="resourceService" class="com.whayer.cloud.storage.component.foundation.res.impl.ResourceServiceImpl">
+		<property name="accessService" ref="accessService" />
+		<property name="changeObjectType" ref="changeObjectType" />
+		<property name="metaDataService" ref="metaDataService" />
+		<property name="sqlFunctionDao" ref="sqlFunctionDao" />
+	</bean>
+</beans>

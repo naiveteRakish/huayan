@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Class-Path: lib/whayer.cloud.storage.business.device.data-1.0.0.jar li
+ b/whayer.cloud.storage.business.base.data-1.0.0.jar lib/whayer.cloud.
+ storage.component.foundation.meta-1.0.0.jar
+Build-Jdk: 1.7.0_71
+Built-By: Administrator
+Created-By: Maven Integration for Eclipse
+Main-Class: StatisticsRunner
+

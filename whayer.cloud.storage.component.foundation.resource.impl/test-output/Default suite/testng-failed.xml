@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite guice-stage="DEVELOPMENT" name="Failed suite [Default suite]">
+  <test name="Default test(failed)">
+    <classes>
+      <class name="com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest">
+        <methods>
+          <include name="find"/>
+          <include name="update"/>
+          <include name="count"/>
+          <include name="update2"/>
+          <include name="update1"/>
+          <include name="save"/>
+          <include name="getByCode"/>
+          <include name="delete"/>
+          <include name="beforeTest"/>
+          <include name="save1"/>
+          <include name="get"/>
+        </methods>
+      </class> <!-- com.whayer.cloud.storage.component.foundation.res.implTest.ResourceServiceImplTest -->
+    </classes>
+  </test> <!-- Default test(failed) -->
+</suite> <!-- Failed suite [Default suite] -->
